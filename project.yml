@@ -1,0 +1,34 @@
+name: PaperReader
+options:
+  bundleIdPrefix: com.jklwjr
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+configFiles:
+  Debug: PaperReader/Support/Secrets.xcconfig
+  Release: PaperReader/Support/Secrets.xcconfig
+targets:
+  PaperReader:
+    type: application
+    platform: iOS
+    sources:
+      - PaperReader
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.jklwjr.PaperReader
+        CODE_SIGN_STYLE: Automatic
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1"
+        INFOPLIST_KEY_CFBundleDisplayName: Paper Reader
+    info:
+      path: PaperReader/Support/Info.plist
+      properties:
+        CFBundleDisplayName: Paper Reader
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIBackgroundModes:
+          - audio
+        GEMINI_API_KEY: $(GEMINI_API_KEY)

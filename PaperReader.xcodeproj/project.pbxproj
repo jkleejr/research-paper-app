@@ -1,0 +1,369 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1B4C7AECE694635FF099B414 /* PaperCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D3E847DC9680F416DE8E1 /* PaperCardView.swift */; };
+		217DAF42DBAB30E6907F6261 /* PaperStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33EB40BF4C1A2C1E17E17B6 /* PaperStore.swift */; };
+		6DBC30E0B3F5F4DEE01F4D2C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFD5505FDB15E2C46F6AF8F /* HomeView.swift */; };
+		80F395E442AEE497FC43B188 /* PaperReaderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9754327B72C0E55BE52C68EE /* PaperReaderApp.swift */; };
+		8C12B4DD6C874609067F88AB /* Paper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7310DD50DF0ECE7C7A05E66F /* Paper.swift */; };
+		A0D849C931220891AE7D5753 /* PDFTextExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971075AB06D3A0E46F791C84 /* PDFTextExtractor.swift */; };
+		A56C74B3C4AB2497BAE778CD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2463508E524E3D2944C6EED8 /* SettingsView.swift */; };
+		B8530E491766E035E167B10C /* RawTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F555CC85863DB43D6E3E217A /* RawTextView.swift */; };
+		CE82D21698A82754C611313A /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FDC2408B8B9E05A2FD3A5D /* AppConfig.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2463508E524E3D2944C6EED8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		5702D29E675B9E394296BC70 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7310DD50DF0ECE7C7A05E66F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
+		86683C37CFB8D683C7EEAA0B /* PaperReader.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PaperReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		971075AB06D3A0E46F791C84 /* PDFTextExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFTextExtractor.swift; sourceTree = "<group>"; };
+		9754327B72C0E55BE52C68EE /* PaperReaderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperReaderApp.swift; sourceTree = "<group>"; };
+		ADFD5505FDB15E2C46F6AF8F /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		B5FDC2408B8B9E05A2FD3A5D /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		C33EB40BF4C1A2C1E17E17B6 /* PaperStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperStore.swift; sourceTree = "<group>"; };
+		D7182CFDA3A6F24E1B4EE05C /* Secrets.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.example.xcconfig; sourceTree = "<group>"; };
+		ED1D3E847DC9680F416DE8E1 /* PaperCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperCardView.swift; sourceTree = "<group>"; };
+		F555CC85863DB43D6E3E217A /* RawTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawTextView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		1DB2D530D1EB3E0201D37012 = {
+			isa = PBXGroup;
+			children = (
+				45CD5161784A76C41FD37CF1 /* PaperReader */,
+				332F82572F781AF3D2AE43E1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1DF097E0B2430EA6EF49BE11 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B5FDC2408B8B9E05A2FD3A5D /* AppConfig.swift */,
+				9754327B72C0E55BE52C68EE /* PaperReaderApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		332F82572F781AF3D2AE43E1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				86683C37CFB8D683C7EEAA0B /* PaperReader.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3D2FE5B2515F9F01118BB807 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7310DD50DF0ECE7C7A05E66F /* Paper.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		45CD5161784A76C41FD37CF1 /* PaperReader */ = {
+			isa = PBXGroup;
+			children = (
+				1DF097E0B2430EA6EF49BE11 /* App */,
+				3D2FE5B2515F9F01118BB807 /* Models */,
+				702C3181C14E57C652EFAFEF /* Services */,
+				A257B573701690F4407A06D5 /* Support */,
+				CD718B6BE11041A45A291C40 /* Views */,
+			);
+			path = PaperReader;
+			sourceTree = "<group>";
+		};
+		702C3181C14E57C652EFAFEF /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				C33EB40BF4C1A2C1E17E17B6 /* PaperStore.swift */,
+				971075AB06D3A0E46F791C84 /* PDFTextExtractor.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A257B573701690F4407A06D5 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				5702D29E675B9E394296BC70 /* Info.plist */,
+				D7182CFDA3A6F24E1B4EE05C /* Secrets.example.xcconfig */,
+				92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		CD718B6BE11041A45A291C40 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				ADFD5505FDB15E2C46F6AF8F /* HomeView.swift */,
+				ED1D3E847DC9680F416DE8E1 /* PaperCardView.swift */,
+				F555CC85863DB43D6E3E217A /* RawTextView.swift */,
+				2463508E524E3D2944C6EED8 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		84F6817D55EEA4B25E84B36D /* PaperReader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BAB1BBE9C4FA5133569B89C3 /* Build configuration list for PBXNativeTarget "PaperReader" */;
+			buildPhases = (
+				1D4B87CDED89B08EF8F91F8B /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PaperReader;
+			packageProductDependencies = (
+			);
+			productName = PaperReader;
+			productReference = 86683C37CFB8D683C7EEAA0B /* PaperReader.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		881748060D3D0F573A304C5C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					84F6817D55EEA4B25E84B36D = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 5CC64B98EBF78C2716057410 /* Build configuration list for PBXProject "PaperReader" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 1DB2D530D1EB3E0201D37012;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 332F82572F781AF3D2AE43E1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				84F6817D55EEA4B25E84B36D /* PaperReader */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1D4B87CDED89B08EF8F91F8B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE82D21698A82754C611313A /* AppConfig.swift in Sources */,
+				6DBC30E0B3F5F4DEE01F4D2C /* HomeView.swift in Sources */,
+				A0D849C931220891AE7D5753 /* PDFTextExtractor.swift in Sources */,
+				8C12B4DD6C874609067F88AB /* Paper.swift in Sources */,
+				1B4C7AECE694635FF099B414 /* PaperCardView.swift in Sources */,
+				80F395E442AEE497FC43B188 /* PaperReaderApp.swift in Sources */,
+				217DAF42DBAB30E6907F6261 /* PaperStore.swift in Sources */,
+				B8530E491766E035E167B10C /* RawTextView.swift in Sources */,
+				A56C74B3C4AB2497BAE778CD /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		176867FAE6740ECFF9E28A20 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		6BB54F601FB147B2D41DA0E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = PaperReader/Support/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Paper Reader";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jklwjr.PaperReader;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		D8C0D1694C8491726A14E8FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E05D8F063296BD418AFCEDF2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = PaperReader/Support/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Paper Reader";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jklwjr.PaperReader;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5CC64B98EBF78C2716057410 /* Build configuration list for PBXProject "PaperReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8C0D1694C8491726A14E8FD /* Debug */,
+				176867FAE6740ECFF9E28A20 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BAB1BBE9C4FA5133569B89C3 /* Build configuration list for PBXNativeTarget "PaperReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6BB54F601FB147B2D41DA0E1 /* Debug */,
+				E05D8F063296BD418AFCEDF2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 881748060D3D0F573A304C5C /* Project object */;
+}

@@ -1,0 +1,13 @@
+# Secrets — never commit API keys
+PaperReader/Support/Secrets.xcconfig
+
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# macOS
+.DS_Store
