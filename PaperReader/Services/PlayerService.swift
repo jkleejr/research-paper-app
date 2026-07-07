@@ -60,9 +60,9 @@ final class PlayerService {
     private var tickTimer: Timer?
     private var lastPersist = Date.distantPast
 
-    init(store: PaperStore, client: GeminiClient) {
+    init(store: PaperStore, prefetcher: TTSPrefetcher) {
         self.store = store
-        self.prefetcher = TTSPrefetcher(store: store, client: client)
+        self.prefetcher = prefetcher
         let saved = UserDefaults.standard.float(forKey: "playbackRate")
         self.playbackRate = saved == 0 ? 1.0 : saved
 

@@ -15,6 +15,15 @@ struct Paper: Codable, Identifiable, Equatable {
     var chunks: [ChunkPlan]
     var playback: PlaybackState
 
+    /// Synthesized-audio progress in chunks: (cached, total).
+    var audioProgress: (done: Int, total: Int) {
+        let done = chunks.count { chunk in
+            if case .cached = chunk.audioStatus { return true }
+            return false
+        }
+        return (done, chunks.count)
+    }
+
     init(id: UUID = UUID(), title: String, originalFilename: String) {
         self.id = id
         self.title = title

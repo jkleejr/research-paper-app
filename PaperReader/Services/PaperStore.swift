@@ -11,6 +11,10 @@ final class PaperStore {
     /// Papers with a pipeline task currently running, to avoid double-starts.
     private var activePipelines: Set<UUID> = []
 
+    /// Fired when a paper's script becomes ready (or a ready paper is found
+    /// with missing audio at launch), so full audio synthesis can start.
+    var onScriptReady: ((UUID) -> Void)?
+
     nonisolated private static var rootURL: URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         return appSupport.appendingPathComponent("Papers", isDirectory: true)
@@ -199,6 +203,7 @@ final class PaperStore {
             paper.playback = PlaybackState()
             paper.status = .ready
             save(paper)
+            onScriptReady?(paperID)
         } catch {
             paper.cleanedChunks = cleaned
             paper.status = .failed(error.localizedDescription)
@@ -228,6 +233,8 @@ final class PaperStore {
                 extractText(for: paper.id)
             case .imported, .generatingScript:
                 generateScript(for: paper.id)
+            case .ready where paper.audioProgress.done < paper.audioProgress.total:
+                onScriptReady?(paper.id)
             default:
                 break
             }

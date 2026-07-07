@@ -38,7 +38,12 @@ struct PaperCardView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         case .ready:
-            if paper.playback.completed {
+            let audio = paper.audioProgress
+            if audio.done < audio.total {
+                Text("Generating audio · \(Int(Double(audio.done) / Double(audio.total) * 100))%")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            } else if paper.playback.completed {
                 Text("Finished")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
