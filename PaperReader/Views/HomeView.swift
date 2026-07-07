@@ -32,6 +32,9 @@ struct HomeView: View {
                     }
                 }
             }
+            .task {
+                store.resumeUnfinished()
+            }
             .fileImporter(isPresented: $showingImporter, allowedContentTypes: [.pdf]) { result in
                 switch result {
                 case .success(let url):
@@ -60,6 +63,12 @@ struct HomeView: View {
                 NavigationLink(value: paper.id) {
                     PaperCardView(paper: paper)
                 }
+                .swipeActions(edge: .leading) {
+                    if paper.status.isFailed {
+                        Button("Retry") { store.retry(paper.id) }
+                            .tint(.orange)
+                    }
+                }
             }
             .onDelete { indexSet in
                 for index in indexSet {
@@ -69,9 +78,7 @@ struct HomeView: View {
         }
         .listStyle(.plain)
         .navigationDestination(for: UUID.self) { paperID in
-            if let paper = store.paper(id: paperID) {
-                RawTextView(paper: paper)
-            }
+            RawTextView(paperID: paperID)
         }
     }
 

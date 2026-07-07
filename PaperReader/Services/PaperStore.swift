@@ -7,6 +7,10 @@ import Observation
 final class PaperStore {
     private(set) var papers: [Paper] = []
 
+    private let gemini = GeminiClient()
+    /// Papers with a pipeline task currently running, to avoid double-starts.
+    private var activePipelines: Set<UUID> = []
+
     private static var rootURL: URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         return appSupport.appendingPathComponent("Papers", isDirectory: true)
@@ -124,10 +128,108 @@ final class PaperStore {
                 paper.extractedPages = extraction.pages
                 paper.pageCount = extraction.pageCount
                 paper.status = .imported
+                self.save(paper)
+                self.generateScript(for: paperID)
             case .failure(let error):
                 paper.status = .failed(error.localizedDescription)
+                self.save(paper)
             }
-            self.save(paper)
+        }
+    }
+
+    // MARK: - Script generation
+
+    /// Chunked LLM cleanup with per-chunk persistence so a killed app resumes
+    /// where it left off instead of re-spending tokens.
+    func generateScript(for paperID: UUID) {
+        guard let paper = paper(id: paperID),
+              paper.extractedPages != nil,
+              !activePipelines.contains(paperID) else { return }
+        activePipelines.insert(paperID)
+
+        Task {
+            defer { activePipelines.remove(paperID) }
+            await runScriptPipeline(paperID: paperID)
+        }
+    }
+
+    private func runScriptPipeline(paperID: UUID) async {
+        guard var paper = paper(id: paperID), let pages = paper.extractedPages else { return }
+
+        let generator = ScriptGenerator(client: gemini)
+        let inputChunks = ScriptGenerator.inputChunks(from: pages)
+        guard !inputChunks.isEmpty else {
+            paper.status = .failed("No text to process.")
+            save(paper)
+            return
+        }
+
+        // Resume: keep prior per-chunk results if the chunking is unchanged.
+        var cleaned = paper.cleanedChunks ?? Array(repeating: nil, count: inputChunks.count)
+        if cleaned.count != inputChunks.count {
+            cleaned = Array(repeating: nil, count: inputChunks.count)
+        }
+
+        do {
+            // Improve on the filename title once per paper.
+            if paper.title == paper.originalFilename, let firstPage = pages.first {
+                if let title = try? await generator.extractTitle(fromFirstPage: firstPage) {
+                    paper.title = title
+                }
+            }
+
+            for (i, chunk) in inputChunks.enumerated() where cleaned[i] == nil {
+                paper.status = .generatingScript(done: i, total: inputChunks.count)
+                paper.cleanedChunks = cleaned
+                save(paper)
+
+                cleaned[i] = try await generator.cleanChunk(chunk, index: i, total: inputChunks.count)
+            }
+
+            let script = cleaned.compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: "\n\n")
+            let sentences = SentenceSegmenter.sentences(from: script)
+            guard !sentences.isEmpty else {
+                throw GeminiError.emptyResponse
+            }
+
+            paper.cleanedChunks = cleaned
+            paper.sentences = sentences
+            paper.chunks = ChunkPlanner.plan(for: sentences)
+            paper.playback = PlaybackState()
+            paper.status = .ready
+            save(paper)
+        } catch {
+            paper.cleanedChunks = cleaned
+            paper.status = .failed(error.localizedDescription)
+            save(paper)
+        }
+    }
+
+    /// Restart the pipeline for a failed/stuck paper, reusing whatever already succeeded.
+    func retry(_ paperID: UUID) {
+        guard var paper = paper(id: paperID) else { return }
+        if paper.extractedPages == nil {
+            paper.status = .extracting
+            save(paper)
+            extractText(for: paperID)
+        } else {
+            paper.status = .imported
+            save(paper)
+            generateScript(for: paperID)
+        }
+    }
+
+    /// Called at launch: pick up papers that were mid-pipeline when the app quit.
+    func resumeUnfinished() {
+        for paper in papers {
+            switch paper.status {
+            case .extracting:
+                extractText(for: paper.id)
+            case .imported, .generatingScript:
+                generateScript(for: paper.id)
+            default:
+                break
+            }
         }
     }
 }
