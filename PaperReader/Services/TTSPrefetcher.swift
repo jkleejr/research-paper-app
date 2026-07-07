@@ -1,4 +1,5 @@
 import Foundation
+import Observation
 
 /// Synthesizes paper audio on demand. Two demand sources feed one sequential
 /// worker (a single request in flight — friendly to rate limits): the playhead
@@ -7,27 +8,51 @@ import Foundation
 /// position when its script becomes ready so tapping play starts instantly.
 /// Nothing else is generated — audio is paid for roughly as it's listened to.
 @MainActor
+@Observable
 final class TTSPrefetcher {
-    private let store: PaperStore
-    private let tts: TTSService
+    /// The synthesis request currently in flight, for progress estimates.
+    struct ActiveJob {
+        let paperID: UUID
+        let chunkIndex: Int
+        let startedAt: Date
+        let estimatedDuration: TimeInterval
+    }
+
+    private(set) var activeJob: ActiveJob?
+
+    @ObservationIgnored private let store: PaperStore
+    @ObservationIgnored private let tts: TTSService
+
+    /// Learned synthesis speed (seconds of wall-clock per character of text),
+    /// EMA over completed chunks, persisted across launches.
+    @ObservationIgnored private var secondsPerChar: Double {
+        didSet { UserDefaults.standard.set(secondsPerChar, forKey: "ttsSecondsPerChar") }
+    }
+
+    func estimatedSeconds(forChars chars: Int) -> TimeInterval {
+        min(max(Double(chars) * secondsPerChar, 5), 120)
+    }
 
     /// Fired on the main actor whenever a chunk finishes synthesizing,
     /// so the player can resume if it was waiting on that chunk.
-    var onChunkReady: ((UUID, Int) -> Void)?
-    var onChunkFailed: ((UUID, Int, Error) -> Void)?
+    @ObservationIgnored var onChunkReady: ((UUID, Int) -> Void)?
+    @ObservationIgnored var onChunkFailed: ((UUID, Int, Error) -> Void)?
 
-    private var task: Task<Void, Never>?
+    @ObservationIgnored private var task: Task<Void, Never>?
     /// Single-chunk jobs: cache the resume-position chunk of a freshly
     /// ready paper without disturbing the playhead window.
-    private var warmups: [(paperID: UUID, chunkIndex: Int)] = []
+    @ObservationIgnored private var warmups: [(paperID: UUID, chunkIndex: Int)] = []
     /// Chunks near this position jump the queue.
-    private var playhead: (paperID: UUID, chunkIndex: Int)?
+    @ObservationIgnored private var playhead: (paperID: UUID, chunkIndex: Int)?
     private let windowSize = 3
     private let maxAttempts = 3
 
     init(store: PaperStore, client: GeminiClient) {
         self.store = store
         self.tts = TTSService(client: client)
+        let saved = UserDefaults.standard.double(forKey: "ttsSecondsPerChar")
+        // ~0.03 s/char ≈ 22s for a typical 750-char chunk until we've measured.
+        self.secondsPerChar = saved > 0 ? saved : 0.03
     }
 
     /// Cache one chunk at the paper's saved position so playback starts
@@ -114,13 +139,20 @@ final class TTSPrefetcher {
         paper.chunks[chunkIndex].audioStatus = .synthesizing
         store.save(paper)
 
+        let chars = Self.charCount(of: paper.chunks[chunkIndex], in: paper)
+        activeJob = ActiveJob(paperID: paperID, chunkIndex: chunkIndex,
+                              startedAt: Date(), estimatedDuration: estimatedSeconds(forChars: chars))
+        defer { activeJob = nil }
+
         var lastError: Error?
         for attempt in 1...maxAttempts {
             do {
                 guard let current = store.paper(id: paperID) else { return }
+                let attemptStart = Date()
                 let result = try await tts.synthesize(paperID: paperID,
                                                       chunk: current.chunks[chunkIndex],
                                                       sentences: current.sentences)
+                learnRate(seconds: Date().timeIntervalSince(attemptStart), chars: chars)
                 guard var updated = store.paper(id: paperID) else { return }
                 updated.chunks[chunkIndex].audioStatus = .cached(duration: result.duration)
                 updated.chunks[chunkIndex].sentenceDurations = result.sentenceDurations
@@ -146,5 +178,21 @@ final class TTSPrefetcher {
         warmups.removeAll { $0.paperID == paperID }
         if playhead?.paperID == paperID { playhead = nil }
         if let lastError { onChunkFailed?(paperID, chunkIndex, lastError) }
+    }
+
+    // MARK: - Estimation
+
+    /// EMA over the per-attempt wall clock of successful syntheses.
+    private func learnRate(seconds: TimeInterval, chars: Int) {
+        guard chars > 0, seconds > 0 else { return }
+        let observed = seconds / Double(chars)
+        let blended = secondsPerChar * 0.7 + observed * 0.3
+        secondsPerChar = min(max(blended, 0.005), 0.2)
+    }
+
+    static func charCount(of chunk: ChunkPlan, in paper: Paper) -> Int {
+        chunk.sentenceRange.reduce(0) { count, i in
+            paper.sentences.indices.contains(i) ? count + paper.sentences[i].text.count : count
+        }
     }
 }

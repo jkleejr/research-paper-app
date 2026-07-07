@@ -16,9 +16,12 @@ struct MiniPlayerView: View {
                     Text(paper.title)
                         .font(.subheadline.weight(.medium))
                         .lineLimit(1)
-                    Text(statusText)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+                    TimelineView(.periodic(from: .now, by: 1)) { context in
+                        Text(statusText(now: context.date))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
                 }
 
                 Spacer(minLength: 8)
@@ -58,9 +61,14 @@ struct MiniPlayerView: View {
         }
     }
 
-    private var statusText: String {
+    private func statusText(now: Date) -> String {
         guard let paper = player.paper, !paper.sentences.isEmpty else { return "" }
-        if player.isBuffering { return "Generating audio…" }
+        if player.isBuffering {
+            if let remaining = player.bufferingRemainingSeconds(now: now), remaining > 2 {
+                return "Generating audio… about \(remaining)s"
+            }
+            return "Generating audio… almost done"
+        }
         return "Sentence \(player.currentSentenceIndex + 1) of \(paper.sentences.count)"
     }
 

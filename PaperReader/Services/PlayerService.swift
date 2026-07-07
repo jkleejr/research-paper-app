@@ -39,6 +39,24 @@ final class PlayerService {
         currentPaperID.flatMap { store.paper(id: $0) }
     }
 
+    /// Rough seconds until the chunk the playhead is waiting on becomes
+    /// playable, from the prefetcher's learned synthesis speed. Negative once
+    /// the estimate is exceeded (retries); nil when not buffering.
+    func bufferingRemainingSeconds(now: Date = Date()) -> Int? {
+        guard isBuffering, let paper, paper.chunks.indices.contains(currentChunkIndex) else { return nil }
+        let ours = prefetcher.estimatedSeconds(
+            forChars: TTSPrefetcher.charCount(of: paper.chunks[currentChunkIndex], in: paper))
+        guard let job = prefetcher.activeJob else {
+            return Int(ours.rounded(.up))
+        }
+        let jobRemaining = job.estimatedDuration - now.timeIntervalSince(job.startedAt)
+        if job.paperID == paper.id && job.chunkIndex == currentChunkIndex {
+            return Int(jobRemaining.rounded(.up))
+        }
+        // Something else is in flight; our chunk queues behind it.
+        return Int((max(jobRemaining, 0) + ours).rounded(.up))
+    }
+
     private let store: PaperStore
     private let prefetcher: TTSPrefetcher
 

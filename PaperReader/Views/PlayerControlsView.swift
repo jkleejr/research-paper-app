@@ -40,12 +40,16 @@ struct PlayerControlsView: View {
     @ViewBuilder
     private var statusLine: some View {
         if player.isBuffering {
-            HStack(spacing: 8) {
-                ProgressView()
-                    .controlSize(.small)
-                Text("Generating audio…")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text(bufferingLabel(now: context.date))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .contentTransition(.numericText(countsDown: true))
+                }
             }
         } else if let error = player.playbackError {
             Text(error)
@@ -145,5 +149,12 @@ struct PlayerControlsView: View {
 
     private func label(for speed: Float) -> String {
         speed == Float(Int(speed)) ? "\(Int(speed))×" : String(format: "%g×", speed)
+    }
+
+    private func bufferingLabel(now: Date) -> String {
+        guard let remaining = player.bufferingRemainingSeconds(now: now), remaining > 2 else {
+            return "Generating audio… almost done"
+        }
+        return "Generating audio… about \(remaining)s"
     }
 }
