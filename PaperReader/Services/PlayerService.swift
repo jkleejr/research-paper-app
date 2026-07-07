@@ -1,0 +1,392 @@
+import AVFoundation
+import Foundation
+import Observation
+
+/// Single source of truth for playback, shared by the home mini-player, paper
+/// cards, and the reader screen.
+///
+/// Position model: chunk boundaries are exact (schedule-completion callbacks fire
+/// when a chunk's audio has fully played), and position inside a chunk is
+/// interpolated from wall-clock playing time × playback rate. Boundaries re-sync
+/// every chunk, so interpolation error can't accumulate — well within
+/// sentence-level highlighting accuracy.
+@MainActor
+@Observable
+final class PlayerService {
+    private(set) var currentPaperID: UUID?
+    private(set) var isPlaying = false
+    /// True when the playhead reached a chunk whose audio isn't synthesized yet.
+    private(set) var isBuffering = false
+    private(set) var currentSentenceIndex = 0
+    private(set) var playbackError: String?
+
+    var playbackRate: Float {
+        didSet {
+            UserDefaults.standard.set(playbackRate, forKey: "playbackRate")
+            applyRate()
+        }
+    }
+
+    /// 0...1 across the whole paper, by sentence position.
+    var progress: Double {
+        guard let paper, !paper.sentences.isEmpty else { return 0 }
+        return Double(currentSentenceIndex) / Double(paper.sentences.count - 1)
+    }
+
+    var paper: Paper? {
+        currentPaperID.flatMap { store.paper(id: $0) }
+    }
+
+    private let store: PaperStore
+    private let prefetcher: TTSPrefetcher
+
+    private let engine = AVAudioEngine()
+    private let playerNode = AVAudioPlayerNode()
+    private let timePitch = AVAudioUnitTimePitch()
+    private var engineConfigured = false
+
+    // Playhead bookkeeping (see position model above).
+    private var currentChunkIndex = 0
+    private var contentElapsedInChunk: Double = 0
+    private var lastTick: Date?
+    private var scheduledAheadChunk: Int?
+    /// True while the player node has (possibly paused) buffers queued.
+    private var hasScheduledQueue = false
+    /// Invalidates in-flight completion callbacks after stop/seek/load.
+    private var generation = 0
+
+    private var tickTimer: Timer?
+    private var lastPersist = Date.distantPast
+
+    init(store: PaperStore, client: GeminiClient) {
+        self.store = store
+        self.prefetcher = TTSPrefetcher(store: store, client: client)
+        let saved = UserDefaults.standard.float(forKey: "playbackRate")
+        self.playbackRate = saved == 0 ? 1.0 : saved
+
+        prefetcher.onChunkReady = { [weak self] paperID, chunkIndex in
+            self?.chunkBecameReady(paperID: paperID, chunkIndex: chunkIndex)
+        }
+        prefetcher.onChunkFailed = { [weak self] paperID, _, error in
+            guard let self, self.currentPaperID == paperID else { return }
+            self.playbackError = error.localizedDescription
+        }
+    }
+
+    // MARK: - Public controls
+
+    func load(_ paperID: UUID) {
+        guard let target = store.paper(id: paperID), target.status == .ready else { return }
+        if currentPaperID == paperID { return }
+
+        stopPlayback(persist: true)
+        currentPaperID = paperID
+        playbackError = nil
+        let startSentence = target.playback.completed ? 0 : target.playback.sentenceIndex
+        moveTo(sentence: startSentence)
+    }
+
+    func play() {
+        guard let paper else { return }
+        playbackError = nil
+        configureEngineIfNeeded()
+        configureAudioSession()
+
+        guard chunkIsPlayable(currentChunkIndex, in: paper) else {
+            enterBuffering()
+            return
+        }
+        if !scheduleFromCurrentPosition() { return }
+        playerNode.play()
+        isPlaying = true
+        isBuffering = false
+        startTicking()
+        prefetcher.ensureBuffered(paperID: paper.id, around: currentChunkIndex)
+    }
+
+    func pause() {
+        guard isPlaying else { return }
+        tick()  // fold in the last partial interval before pausing
+        playerNode.pause()
+        isPlaying = false
+        stopTicking()
+        persistPosition(force: true)
+    }
+
+    func toggle() {
+        if isPlaying { pause() } else if isBuffering { enterBuffering() } else { resumeOrPlay() }
+    }
+
+    private func resumeOrPlay() {
+        // playerNode.pause() keeps its scheduled buffers, so resuming is cheap;
+        // after a seek/stop the queue is empty and play() rebuilds it.
+        if hasScheduledQueue {
+            configureAudioSession()
+            playerNode.play()
+            isPlaying = true
+            startTicking()
+        } else {
+            play()
+        }
+    }
+
+    func seek(toSentence index: Int) {
+        guard let paper, !paper.sentences.isEmpty else { return }
+        let clamped = max(0, min(index, paper.sentences.count - 1))
+        let wasPlaying = isPlaying
+        stopPlayback(persist: false)
+        moveTo(sentence: clamped)
+        persistPosition(force: true)
+        if wasPlaying { play() } else if !chunkIsPlayable(currentChunkIndex, in: paper) {
+            prefetcher.ensureBuffered(paperID: paper.id, around: currentChunkIndex)
+        }
+    }
+
+    func skip(sentences delta: Int) {
+        seek(toSentence: currentSentenceIndex + delta)
+    }
+
+    /// X button on the mini-player: stop and unload.
+    func dismiss() {
+        stopPlayback(persist: true)
+        prefetcher.stop()
+        currentPaperID = nil
+        currentSentenceIndex = 0
+    }
+
+    // MARK: - Scheduling
+
+    private func moveTo(sentence index: Int) {
+        guard let paper else { return }
+        currentSentenceIndex = index
+        currentChunkIndex = paper.chunks.firstIndex { $0.sentenceRange.contains(index) } ?? 0
+        contentElapsedInChunk = offsetSeconds(toSentence: index, inChunk: currentChunkIndex, paper: paper)
+    }
+
+    /// Schedules the current chunk from the current intra-chunk offset, plus the
+    /// next chunk if it's ready. Returns false if the audio file couldn't be read.
+    private func scheduleFromCurrentPosition() -> Bool {
+        guard let paper else { return false }
+        generation += 1
+        scheduledAheadChunk = nil
+
+        do {
+            try scheduleChunk(currentChunkIndex, paper: paper, fromSeconds: contentElapsedInChunk)
+            scheduleNextIfReady(after: currentChunkIndex, paper: paper)
+            hasScheduledQueue = true
+            return true
+        } catch {
+            playbackError = "Couldn't read cached audio: \(error.localizedDescription)"
+            return false
+        }
+    }
+
+    private func scheduleChunk(_ index: Int, paper: Paper, fromSeconds offset: Double) throws {
+        let url = AudioCache.url(paperID: paper.id, chunkIndex: index)
+        let file = try AVAudioFile(forReading: url)
+        let sampleRate = file.processingFormat.sampleRate
+        let startFrame = AVAudioFramePosition(offset * sampleRate)
+        let remaining = AVAudioFrameCount(max(0, file.length - startFrame))
+        guard remaining > 0,
+              let buffer = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: remaining) else {
+            // Zero frames left (offset at chunk end) — treat as instantly completed.
+            chunkFinished(index, generation: generation)
+            return
+        }
+        file.framePosition = startFrame
+        try file.read(into: buffer)
+
+        let gen = generation
+        playerNode.scheduleBuffer(buffer, completionCallbackType: .dataPlayedBack) { [weak self] _ in
+            Task { @MainActor in
+                self?.chunkFinished(index, generation: gen)
+            }
+        }
+    }
+
+    private func scheduleNextIfReady(after index: Int, paper: Paper) {
+        let next = index + 1
+        guard next < paper.chunks.count,
+              scheduledAheadChunk == nil,
+              chunkIsPlayable(next, in: paper) else { return }
+        if (try? scheduleChunk(next, paper: paper, fromSeconds: 0)) != nil {
+            scheduledAheadChunk = next
+        }
+    }
+
+    private func chunkFinished(_ index: Int, generation gen: Int) {
+        guard gen == generation, let paper, index == currentChunkIndex else { return }
+
+        let next = index + 1
+        if next >= paper.chunks.count {
+            finishPaper()
+            return
+        }
+
+        currentChunkIndex = next
+        contentElapsedInChunk = 0
+        currentSentenceIndex = paper.chunks[next].sentenceRange.lowerBound
+        persistPosition(force: true)
+        prefetcher.ensureBuffered(paperID: paper.id, around: next)
+
+        if scheduledAheadChunk == next {
+            // Already playing the pre-scheduled buffer; top up the queue.
+            scheduledAheadChunk = nil
+            scheduleNextIfReady(after: next, paper: paper)
+        } else if chunkIsPlayable(next, in: paper) {
+            _ = scheduleFromCurrentPosition()
+            playerNode.play()
+        } else {
+            enterBuffering()
+        }
+    }
+
+    private func finishPaper() {
+        guard var paper else { return }
+        paper.playback.completed = true
+        paper.playback.sentenceIndex = 0
+        store.save(paper)
+        stopPlayback(persist: false)
+        currentSentenceIndex = paper.sentences.count - 1
+    }
+
+    // MARK: - Buffering
+
+    private func enterBuffering() {
+        guard let paper else { return }
+        playerNode.stop()
+        generation += 1
+        scheduledAheadChunk = nil
+        hasScheduledQueue = false
+        isPlaying = false
+        isBuffering = true
+        stopTicking()
+        prefetcher.ensureBuffered(paperID: paper.id, around: currentChunkIndex)
+    }
+
+    private func chunkBecameReady(paperID: UUID, chunkIndex: Int) {
+        guard currentPaperID == paperID else { return }
+        if isBuffering && chunkIndex == currentChunkIndex {
+            isBuffering = false
+            play()
+        } else if isPlaying, let paper, scheduledAheadChunk == nil, chunkIndex == currentChunkIndex + 1 {
+            // The chunk we were about to run out of just landed — queue it.
+            scheduleNextIfReady(after: currentChunkIndex, paper: paper)
+        }
+    }
+
+    private func chunkIsPlayable(_ index: Int, in paper: Paper) -> Bool {
+        guard paper.chunks.indices.contains(index) else { return false }
+        if case .cached = paper.chunks[index].audioStatus {
+            return AudioCache.exists(paperID: paper.id, chunkIndex: index)
+        }
+        return false
+    }
+
+    // MARK: - Playhead ticking
+
+    private func startTicking() {
+        lastTick = Date()
+        tickTimer?.invalidate()
+        let timer = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in
+            Task { @MainActor in self?.tick() }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        tickTimer = timer
+    }
+
+    private func stopTicking() {
+        tickTimer?.invalidate()
+        tickTimer = nil
+        lastTick = nil
+    }
+
+    private func tick() {
+        guard isPlaying, let paper, let last = lastTick else { return }
+        let now = Date()
+        contentElapsedInChunk += now.timeIntervalSince(last) * Double(playbackRate)
+        lastTick = now
+        updateSentenceIndex(paper: paper)
+        persistPosition(force: false)
+    }
+
+    private func updateSentenceIndex(paper: Paper) {
+        guard paper.chunks.indices.contains(currentChunkIndex) else { return }
+        let chunk = paper.chunks[currentChunkIndex]
+        guard let durations = chunk.sentenceDurations, !durations.isEmpty else {
+            currentSentenceIndex = chunk.sentenceRange.lowerBound
+            return
+        }
+        var remaining = contentElapsedInChunk
+        for (offset, duration) in durations.enumerated() {
+            remaining -= duration
+            if remaining < 0 {
+                currentSentenceIndex = chunk.sentenceRange.lowerBound + offset
+                return
+            }
+        }
+        currentSentenceIndex = chunk.sentenceRange.upperBound
+    }
+
+    private func offsetSeconds(toSentence index: Int, inChunk chunkIndex: Int, paper: Paper) -> Double {
+        guard paper.chunks.indices.contains(chunkIndex),
+              let durations = paper.chunks[chunkIndex].sentenceDurations else { return 0 }
+        let chunk = paper.chunks[chunkIndex]
+        let position = index - chunk.sentenceRange.lowerBound
+        return durations.prefix(max(0, position)).reduce(0, +)
+    }
+
+    // MARK: - Engine / session
+
+    private func configureEngineIfNeeded() {
+        guard !engineConfigured else { return }
+        engine.attach(playerNode)
+        engine.attach(timePitch)
+        // 24kHz mono float32 matches Gemini TTS output; AVAudioFile converts
+        // WAV int16 to float on read, and the engine resamples to hardware rate.
+        let format = AVAudioFormat(standardFormatWithSampleRate: 24_000, channels: 1)
+        engine.connect(playerNode, to: timePitch, format: format)
+        engine.connect(timePitch, to: engine.mainMixerNode, format: format)
+        applyRate()
+        engine.prepare()
+        engineConfigured = true
+    }
+
+    private func applyRate() {
+        timePitch.rate = playbackRate
+    }
+
+    private func configureAudioSession() {
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .spokenAudio)
+            try session.setActive(true)
+            if !engine.isRunning { try engine.start() }
+        } catch {
+            playbackError = "Audio engine failed: \(error.localizedDescription)"
+        }
+    }
+
+    // MARK: - Teardown / persistence
+
+    private func stopPlayback(persist: Bool) {
+        if isPlaying { tick() }
+        generation += 1
+        playerNode.stop()
+        scheduledAheadChunk = nil
+        hasScheduledQueue = false
+        isPlaying = false
+        isBuffering = false
+        stopTicking()
+        if persist { persistPosition(force: true) }
+    }
+
+    private func persistPosition(force: Bool) {
+        guard force || Date().timeIntervalSince(lastPersist) > 5 else { return }
+        guard var paper else { return }
+        lastPersist = Date()
+        paper.playback.sentenceIndex = currentSentenceIndex
+        paper.playback.completed = false
+        store.save(paper)
+    }
+}

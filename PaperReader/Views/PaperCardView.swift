@@ -1,7 +1,12 @@
 import SwiftUI
 
 struct PaperCardView: View {
+    @Environment(PlayerService.self) private var player
     let paper: Paper
+
+    private var isCurrentAndPlaying: Bool {
+        player.currentPaperID == paper.id && player.isPlaying
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -67,9 +72,19 @@ struct PaperCardView: View {
             Image(systemName: "doc.plaintext")
                 .foregroundStyle(.secondary)
         case .ready:
-            Image(systemName: "play.circle.fill")
-                .font(.title)
-                .foregroundStyle(.tint)
+            Button {
+                if player.currentPaperID == paper.id {
+                    player.toggle()
+                } else {
+                    player.load(paper.id)
+                    player.play()
+                }
+            } label: {
+                Image(systemName: isCurrentAndPlaying ? "pause.circle.fill" : "play.circle.fill")
+                    .font(.title)
+                    .foregroundStyle(.tint)
+            }
+            .buttonStyle(.borderless)
         }
     }
 }

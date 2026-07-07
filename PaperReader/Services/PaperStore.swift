@@ -7,34 +7,35 @@ import Observation
 final class PaperStore {
     private(set) var papers: [Paper] = []
 
-    private let gemini = GeminiClient()
+    private let gemini: GeminiClient
     /// Papers with a pipeline task currently running, to avoid double-starts.
     private var activePipelines: Set<UUID> = []
 
-    private static var rootURL: URL {
+    nonisolated private static var rootURL: URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         return appSupport.appendingPathComponent("Papers", isDirectory: true)
     }
 
-    init() {
+    init(client: GeminiClient) {
+        self.gemini = client
         load()
     }
 
     // MARK: - Paths
 
-    static func folderURL(for paperID: UUID) -> URL {
+    nonisolated static func folderURL(for paperID: UUID) -> URL {
         rootURL.appendingPathComponent(paperID.uuidString, isDirectory: true)
     }
 
-    static func pdfURL(for paperID: UUID) -> URL {
+    nonisolated static func pdfURL(for paperID: UUID) -> URL {
         folderURL(for: paperID).appendingPathComponent("original.pdf")
     }
 
-    static func audioDirectoryURL(for paperID: UUID) -> URL {
+    nonisolated static func audioDirectoryURL(for paperID: UUID) -> URL {
         folderURL(for: paperID).appendingPathComponent("audio", isDirectory: true)
     }
 
-    private static func paperJSONURL(for paperID: UUID) -> URL {
+    nonisolated private static func paperJSONURL(for paperID: UUID) -> URL {
         folderURL(for: paperID).appendingPathComponent("paper.json")
     }
 
