@@ -49,13 +49,9 @@ struct MiniPlayerView: View {
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 14)
-                    .fill(.regularMaterial)
-                    .shadow(color: .black.opacity(0.12), radius: 8, y: 2)
-            )
             .overlay(alignment: .bottom) { progressBar }
             .contentShape(Rectangle())
+            .glassCard(in: RoundedRectangle(cornerRadius: 22), interactive: true)
             .onTapGesture(perform: openReader)
             .padding(.horizontal, 12)
             .padding(.bottom, 4)

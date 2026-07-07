@@ -10,6 +10,7 @@
 		0248CFA0FA7123B8C9596298 /* PlayerControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A43BE603C341E35DC1F6098 /* PlayerControlsView.swift */; };
 		0A12186EE6797A6C90A1B730 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E256E6CCDE2AEAAF6B3AB70 /* TTSService.swift */; };
 		0B7E31D2A4C8F9605E1D7A44 /* MiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C84E1B7D3A05F6C428B19 /* MiniPlayerView.swift */; };
+		3C5A19E8D2B7F4106A8E3C57 /* GlassStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4B28F1A9C6E3025B1F9D68 /* GlassStyle.swift */; };
 		0AD8894EC80AE2D3DD685F60 /* GeminiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFE44139FA1FBDE61B2005D /* GeminiClient.swift */; };
 		16AB2D985B5CADBF4265660A /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C194F02A0C11632EA7A9FFC4 /* ReaderView.swift */; };
 		1AC776824B726B0701021316 /* ScriptGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4965F21F7F27AEDDCF5D65E /* ScriptGenerator.swift */; };
@@ -36,6 +37,7 @@
 		5702D29E675B9E394296BC70 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6E256E6CCDE2AEAAF6B3AB70 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
 		7310DD50DF0ECE7C7A05E66F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
+		7D4B28F1A9C6E3025B1F9D68 /* GlassStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassStyle.swift; sourceTree = "<group>"; };
 		86683C37CFB8D683C7EEAA0B /* PaperReader.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PaperReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		971075AB06D3A0E46F791C84 /* PDFTextExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFTextExtractor.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 		CD718B6BE11041A45A291C40 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7D4B28F1A9C6E3025B1F9D68 /* GlassStyle.swift */,
 				ADFD5505FDB15E2C46F6AF8F /* HomeView.swift */,
 				9F2C84E1B7D3A05F6C428B19 /* MiniPlayerView.swift */,
 				ED1D3E847DC9680F416DE8E1 /* PaperCardView.swift */,
@@ -201,6 +204,7 @@
 				CE82D21698A82754C611313A /* AppConfig.swift in Sources */,
 				2ABE5FC46FF38DC73DDEAC8D /* AudioCache.swift in Sources */,
 				0AD8894EC80AE2D3DD685F60 /* GeminiClient.swift in Sources */,
+				3C5A19E8D2B7F4106A8E3C57 /* GlassStyle.swift in Sources */,
 				6DBC30E0B3F5F4DEE01F4D2C /* HomeView.swift in Sources */,
 				0B7E31D2A4C8F9605E1D7A44 /* MiniPlayerView.swift in Sources */,
 				A0D849C931220891AE7D5753 /* PDFTextExtractor.swift in Sources */,

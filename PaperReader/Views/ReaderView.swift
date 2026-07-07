@@ -10,21 +10,27 @@ struct ReaderView: View {
     @State private var autoScroll = true
 
     var body: some View {
-        VStack(spacing: 0) {
-            topBar
-            Divider()
+        Group {
             if let paper = player.paper {
                 sentenceScroll(paper)
             } else {
-                Spacer()
-                Text("Nothing playing")
-                    .foregroundStyle(.secondary)
-                Spacer()
+                VStack {
+                    Spacer()
+                    Text("Nothing playing")
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity)
             }
-            Divider()
-            PlayerControlsView()
         }
         .background(Color(.systemBackground))
+        // Floating glass chrome; the script text scrolls underneath it.
+        .safeAreaInset(edge: .top) { topBar }
+        .safeAreaInset(edge: .bottom) {
+            PlayerControlsView()
+                .padding(.horizontal, 10)
+                .padding(.bottom, 6)
+        }
     }
 
     private var topBar: some View {
@@ -32,6 +38,9 @@ struct ReaderView: View {
             Text(player.paper?.title ?? "")
                 .font(.headline)
                 .lineLimit(1)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .glassCard(in: Capsule())
             Spacer()
             Button {
                 dismiss()
@@ -39,12 +48,13 @@ struct ReaderView: View {
                 Image(systemName: "xmark")
                     .font(.body.weight(.semibold))
                     .foregroundStyle(.secondary)
-                    .frame(width: 32, height: 32)
-                    .background(Circle().fill(.quaternary.opacity(0.5)))
+                    .frame(width: 40, height: 40)
+                    .contentShape(Circle())
             }
+            .glassCard(in: Circle(), interactive: true)
         }
         .padding(.horizontal)
-        .padding(.vertical, 10)
+        .padding(.vertical, 6)
     }
 
     private func sentenceScroll(_ paper: Paper) -> some View {
@@ -88,8 +98,8 @@ struct ReaderView: View {
                             .font(.footnote.weight(.medium))
                             .padding(.horizontal, 14)
                             .padding(.vertical, 8)
-                            .background(Capsule().fill(.thinMaterial))
                     }
+                    .glassCard(in: Capsule(), interactive: true)
                     .padding(.bottom, 12)
                 }
             }

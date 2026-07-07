@@ -32,9 +32,9 @@ struct PlayerControlsView: View {
             }
             .padding(.horizontal, 24)
         }
-        .padding(.top, 12)
-        .padding(.bottom, 20)
-        .background(.regularMaterial)
+        .padding(.top, 14)
+        .padding(.bottom, 16)
+        .glassCard(in: RoundedRectangle(cornerRadius: 28))
     }
 
     @ViewBuilder
