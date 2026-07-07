@@ -24,6 +24,13 @@ struct Paper: Codable, Identifiable, Equatable {
         return (done, chunks.count)
     }
 
+    /// 0...1 listened fraction, from the persisted position.
+    var listenedProgress: Double {
+        guard !sentences.isEmpty else { return 0 }
+        if playback.completed { return 1 }
+        return Double(playback.sentenceIndex) / Double(max(sentences.count - 1, 1))
+    }
+
     init(id: UUID = UUID(), title: String, originalFilename: String) {
         self.id = id
         self.title = title

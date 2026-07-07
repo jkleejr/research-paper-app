@@ -15,11 +15,45 @@ struct PaperCardView: View {
                     .font(.headline)
                     .lineLimit(2)
                 statusLine
+                if paper.status == .ready {
+                    progressBar
+                        .padding(.top, 2)
+                }
             }
             Spacer()
             statusAccessory
         }
         .padding(.vertical, 6)
+    }
+
+    /// Listened fraction, tracking the live playhead when this paper is loaded.
+    private var listenedFraction: Double {
+        if player.currentPaperID == paper.id, !paper.sentences.isEmpty {
+            return Double(player.currentSentenceIndex) / Double(max(paper.sentences.count - 1, 1))
+        }
+        return paper.listenedProgress
+    }
+
+    /// Two layers on one track: light tint = audio generated, solid = listened.
+    private var progressBar: some View {
+        GeometryReader { geo in
+            let audio = paper.audioProgress
+            let generated = audio.total == 0 ? 0 : Double(audio.done) / Double(audio.total)
+            Capsule()
+                .fill(.quaternary)
+                .overlay(alignment: .leading) {
+                    Capsule()
+                        .fill(.tint.opacity(0.3))
+                        .frame(width: geo.size.width * generated)
+                }
+                .overlay(alignment: .leading) {
+                    Capsule()
+                        .fill(.tint)
+                        .frame(width: geo.size.width * listenedFraction)
+                }
+                .clipShape(Capsule())
+        }
+        .frame(height: 4)
     }
 
     @ViewBuilder
@@ -38,12 +72,7 @@ struct PaperCardView: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         case .ready:
-            let audio = paper.audioProgress
-            if audio.done < audio.total {
-                Text("Generating audio · \(Int(Double(audio.done) / Double(audio.total) * 100))%")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            } else if paper.playback.completed {
+            if paper.playback.completed {
                 Text("Finished")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)

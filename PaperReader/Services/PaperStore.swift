@@ -11,8 +11,8 @@ final class PaperStore {
     /// Papers with a pipeline task currently running, to avoid double-starts.
     private var activePipelines: Set<UUID> = []
 
-    /// Fired when a paper's script becomes ready (or a ready paper is found
-    /// with missing audio at launch), so full audio synthesis can start.
+    /// Fired when a paper's script becomes ready (and for ready papers at
+    /// launch), so its resume-position audio can be warmed up.
     var onScriptReady: ((UUID) -> Void)?
 
     nonisolated private static var rootURL: URL {
@@ -233,7 +233,7 @@ final class PaperStore {
                 extractText(for: paper.id)
             case .imported, .generatingScript:
                 generateScript(for: paper.id)
-            case .ready where paper.audioProgress.done < paper.audioProgress.total:
+            case .ready:
                 onScriptReady?(paper.id)
             default:
                 break

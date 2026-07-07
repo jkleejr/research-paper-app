@@ -1,11 +1,11 @@
 import Foundation
 
-/// Synthesizes paper audio in the background. Two demand sources feed one
-/// sequential worker (a single request in flight — friendly to rate limits):
-/// full-paper jobs enqueued when a script finishes generating, and a playhead
-/// window that always takes priority so taps and seeks start playing as soon
-/// as possible. Once the window is satisfied the worker keeps going until the
-/// whole paper is on disk.
+/// Synthesizes paper audio on demand. Two demand sources feed one sequential
+/// worker (a single request in flight — friendly to rate limits): the playhead
+/// window, which keeps ~3 chunks buffered ahead of playback and always takes
+/// priority, and warmup jobs, which cache a single chunk at a paper's resume
+/// position when its script becomes ready so tapping play starts instantly.
+/// Nothing else is generated — audio is paid for roughly as it's listened to.
 @MainActor
 final class TTSPrefetcher {
     private let store: PaperStore
@@ -17,8 +17,9 @@ final class TTSPrefetcher {
     var onChunkFailed: ((UUID, Int, Error) -> Void)?
 
     private var task: Task<Void, Never>?
-    /// Papers queued for full synthesis, oldest first.
-    private var fullJobs: [UUID] = []
+    /// Single-chunk jobs: cache the resume-position chunk of a freshly
+    /// ready paper without disturbing the playhead window.
+    private var warmups: [(paperID: UUID, chunkIndex: Int)] = []
     /// Chunks near this position jump the queue.
     private var playhead: (paperID: UUID, chunkIndex: Int)?
     private let windowSize = 3
@@ -29,23 +30,26 @@ final class TTSPrefetcher {
         self.tts = TTSService(client: client)
     }
 
-    /// Enqueue full-paper synthesis (script just became ready, or app relaunch
-    /// found a paper with missing audio).
-    func synthesizeAll(paperID: UUID) {
-        if !fullJobs.contains(paperID) { fullJobs.append(paperID) }
+    /// Cache one chunk at the paper's saved position so playback starts
+    /// instantly later. No-op if it's already cached.
+    func warmup(paperID: UUID) {
+        guard let paper = store.paper(id: paperID), !paper.chunks.isEmpty else { return }
+        let sentence = paper.playback.completed ? 0 : paper.playback.sentenceIndex
+        let chunkIndex = paper.chunks.firstIndex { $0.sentenceRange.contains(sentence) } ?? 0
+        if !warmups.contains(where: { $0.paperID == paperID && $0.chunkIndex == chunkIndex }) {
+            warmups.append((paperID, chunkIndex))
+        }
         kick()
     }
 
-    /// Re-centers the playhead priority window. The playhead's paper is also
-    /// promoted to a full job so it finishes even if it was never enqueued.
+    /// Re-centers the playhead priority window.
     func ensureBuffered(paperID: UUID, around chunkIndex: Int) {
         playhead = (paperID, chunkIndex)
-        if !fullJobs.contains(paperID) { fullJobs.append(paperID) }
         kick()
     }
 
-    /// Clears playhead priority (player unloaded). Queued full-paper jobs
-    /// keep running to completion.
+    /// Clears playhead priority (player unloaded); synthesis stops once any
+    /// pending warmups drain.
     func stop() {
         playhead = nil
     }
@@ -71,31 +75,23 @@ final class TTSPrefetcher {
     }
 
     private func nextWorkItem() -> WorkItem? {
-        // 1. The playhead window, then the rest of the playhead's paper
-        //    (forward from the window, then anything skipped before it).
+        // 1. The playhead window.
         if let (paperID, cursor) = playhead,
            let paper = store.paper(id: paperID), !paper.chunks.isEmpty {
-            let last = paper.chunks.count - 1
-            let upper = min(cursor + windowSize, last)
+            let upper = min(cursor + windowSize, paper.chunks.count - 1)
             if cursor <= upper, let i = firstUncached(in: paper, range: cursor...upper) {
-                return WorkItem(paperID: paperID, chunkIndex: i)
-            }
-            if upper < last, let i = firstUncached(in: paper, range: (upper + 1)...last) {
-                return WorkItem(paperID: paperID, chunkIndex: i)
-            }
-            if cursor > 0, let i = firstUncached(in: paper, range: 0...(cursor - 1)) {
                 return WorkItem(paperID: paperID, chunkIndex: i)
             }
         }
 
-        // 2. Queued full-paper jobs, oldest first. Finished or deleted papers
-        //    fall out of the queue here.
-        while let paperID = fullJobs.first {
-            if let paper = store.paper(id: paperID), !paper.chunks.isEmpty,
-               let i = firstUncached(in: paper, range: 0...(paper.chunks.count - 1)) {
-                return WorkItem(paperID: paperID, chunkIndex: i)
+        // 2. Warmup jobs, oldest first; satisfied or stale entries drain here.
+        while let job = warmups.first {
+            if let paper = store.paper(id: job.paperID),
+               paper.chunks.indices.contains(job.chunkIndex),
+               firstUncached(in: paper, range: job.chunkIndex...job.chunkIndex) != nil {
+                return WorkItem(paperID: job.paperID, chunkIndex: job.chunkIndex)
             }
-            fullJobs.removeFirst()
+            warmups.removeFirst()
         }
         return nil
     }
@@ -141,13 +137,13 @@ final class TTSPrefetcher {
             }
         }
 
-        // Out of retries: reset the chunk and park this paper so the worker
-        // doesn't spin. Re-opening the paper (or relaunching) re-enqueues it.
+        // Out of retries: reset the chunk and drop this paper's demand so the
+        // worker doesn't spin. Playing or reopening the paper tries again.
         if var updated = store.paper(id: paperID) {
             updated.chunks[chunkIndex].audioStatus = .none
             store.save(updated)
         }
-        fullJobs.removeAll { $0 == paperID }
+        warmups.removeAll { $0.paperID == paperID }
         if playhead?.paperID == paperID { playhead = nil }
         if let lastError { onChunkFailed?(paperID, chunkIndex, lastError) }
     }
