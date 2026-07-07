@@ -34,6 +34,9 @@ struct HomeView: View {
                     }
                 }
             }
+            .safeAreaInset(edge: .bottom) {
+                MiniPlayerView { showingReader = true }
+            }
             .task {
                 store.resumeUnfinished()
             }

@@ -1,5 +1,6 @@
 import AVFoundation
 import Foundation
+import MediaPlayer
 import Observation
 
 /// Single source of truth for playback, shared by the home mini-player, paper
@@ -24,6 +25,7 @@ final class PlayerService {
         didSet {
             UserDefaults.standard.set(playbackRate, forKey: "playbackRate")
             applyRate()
+            updateNowPlaying()
         }
     }
 
@@ -71,6 +73,9 @@ final class PlayerService {
             guard let self, self.currentPaperID == paperID else { return }
             self.playbackError = error.localizedDescription
         }
+
+        configureRemoteCommands()
+        observeSessionNotifications()
     }
 
     // MARK: - Public controls
@@ -102,6 +107,7 @@ final class PlayerService {
         isBuffering = false
         startTicking()
         prefetcher.ensureBuffered(paperID: paper.id, around: currentChunkIndex)
+        updateNowPlaying()
     }
 
     func pause() {
@@ -111,6 +117,7 @@ final class PlayerService {
         isPlaying = false
         stopTicking()
         persistPosition(force: true)
+        updateNowPlaying()
     }
 
     func toggle() {
@@ -125,6 +132,7 @@ final class PlayerService {
             playerNode.play()
             isPlaying = true
             startTicking()
+            updateNowPlaying()
         } else {
             play()
         }
@@ -137,6 +145,7 @@ final class PlayerService {
         stopPlayback(persist: false)
         moveTo(sentence: clamped)
         persistPosition(force: true)
+        updateNowPlaying()
         if wasPlaying { play() } else if !chunkIsPlayable(currentChunkIndex, in: paper) {
             prefetcher.ensureBuffered(paperID: paper.id, around: currentChunkIndex)
         }
@@ -152,6 +161,7 @@ final class PlayerService {
         prefetcher.stop()
         currentPaperID = nil
         currentSentenceIndex = 0
+        updateNowPlaying()
     }
 
     // MARK: - Scheduling
@@ -227,6 +237,7 @@ final class PlayerService {
         contentElapsedInChunk = 0
         currentSentenceIndex = paper.chunks[next].sentenceRange.lowerBound
         persistPosition(force: true)
+        updateNowPlaying()
         prefetcher.ensureBuffered(paperID: paper.id, around: next)
 
         if scheduledAheadChunk == next {
@@ -248,6 +259,7 @@ final class PlayerService {
         store.save(paper)
         stopPlayback(persist: false)
         currentSentenceIndex = paper.sentences.count - 1
+        updateNowPlaying()
     }
 
     // MARK: - Buffering
@@ -334,6 +346,97 @@ final class PlayerService {
         let chunk = paper.chunks[chunkIndex]
         let position = index - chunk.sentenceRange.lowerBound
         return durations.prefix(max(0, position)).reduce(0, +)
+    }
+
+    // MARK: - Lock screen / Control Center
+
+    private func configureRemoteCommands() {
+        let center = MPRemoteCommandCenter.shared()
+
+        center.playCommand.addTarget { [weak self] _ in
+            guard let self else { return .commandFailed }
+            Task { @MainActor in self.resumeOrPlay() }
+            return .success
+        }
+        center.pauseCommand.addTarget { [weak self] _ in
+            guard let self else { return .commandFailed }
+            Task { @MainActor in self.pause() }
+            return .success
+        }
+        center.togglePlayPauseCommand.addTarget { [weak self] _ in
+            guard let self else { return .commandFailed }
+            Task { @MainActor in self.toggle() }
+            return .success
+        }
+        center.skipForwardCommand.preferredIntervals = [1]
+        center.skipForwardCommand.addTarget { [weak self] _ in
+            guard let self else { return .commandFailed }
+            Task { @MainActor in self.skip(sentences: 1) }
+            return .success
+        }
+        center.skipBackwardCommand.preferredIntervals = [1]
+        center.skipBackwardCommand.addTarget { [weak self] _ in
+            guard let self else { return .commandFailed }
+            Task { @MainActor in self.skip(sentences: -1) }
+            return .success
+        }
+    }
+
+    private func updateNowPlaying() {
+        let center = MPNowPlayingInfoCenter.default()
+        guard let paper else {
+            center.nowPlayingInfo = nil
+            return
+        }
+        var info: [String: Any] = [
+            MPMediaItemPropertyTitle: paper.title,
+            MPMediaItemPropertyArtist: "Paper Reader",
+            MPNowPlayingInfoPropertyPlaybackRate: isPlaying ? Double(playbackRate) : 0,
+        ]
+        // Sentence position doubles as track progress; durations are only
+        // exact for synthesized chunks, so expose progress in sentence units.
+        if !paper.sentences.isEmpty {
+            info[MPNowPlayingInfoPropertyPlaybackProgress] = progress
+        }
+        center.nowPlayingInfo = info
+    }
+
+    /// Pause on interruptions (calls, Siri) and when headphones disconnect;
+    /// resume only when the system says the interruption ended with a resume hint.
+    private func observeSessionNotifications() {
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.interruptionNotification,
+            object: AVAudioSession.sharedInstance(),
+            queue: .main
+        ) { [weak self] note in
+            guard let userInfo = note.userInfo,
+                  let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+            let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
+            let shouldResume = AVAudioSession.InterruptionOptions(rawValue: optionsValue).contains(.shouldResume)
+            Task { @MainActor in
+                guard let self else { return }
+                switch type {
+                case .began:
+                    self.pause()
+                case .ended where shouldResume:
+                    self.resumeOrPlay()
+                default:
+                    break
+                }
+            }
+        }
+
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.routeChangeNotification,
+            object: AVAudioSession.sharedInstance(),
+            queue: .main
+        ) { [weak self] note in
+            guard let reasonValue = note.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt,
+                  let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue),
+                  reason == .oldDeviceUnavailable else { return }
+            Task { @MainActor in self?.pause() }
+        }
     }
 
     // MARK: - Engine / session
