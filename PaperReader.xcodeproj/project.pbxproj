@@ -40,7 +40,7 @@
 		6085F355DA573175914476F0 /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
 		6E256E6CCDE2AEAAF6B3AB70 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
 		7310DD50DF0ECE7C7A05E66F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
-		86683C37CFB8D683C7EEAA0B /* PaperReader.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PaperReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		86683C37CFB8D683C7EEAA0B /* PaperReader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaperReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		971075AB06D3A0E46F791C84 /* PDFTextExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFTextExtractor.swift; sourceTree = "<group>"; };
 		9754327B72C0E55BE52C68EE /* PaperReaderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperReaderApp.swift; sourceTree = "<group>"; };
@@ -313,6 +313,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 42WF5JQ74Y;
 				INFOPLIST_FILE = PaperReader/Support/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Paper Reader";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -396,6 +397,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 42WF5JQ74Y;
 				INFOPLIST_FILE = PaperReader/Support/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Paper Reader";
 				LD_RUNPATH_SEARCH_PATHS = (
