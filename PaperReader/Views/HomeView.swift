@@ -2,8 +2,10 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(PaperStore.self) private var store
+    @Environment(PlayerService.self) private var player
     @State private var showingImporter = false
     @State private var showingSettings = false
+    @State private var showingReader = false
     @State private var importError: String?
 
     var body: some View {
@@ -46,6 +48,9 @@ struct HomeView: View {
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
             }
+            .fullScreenCover(isPresented: $showingReader) {
+                ReaderView()
+            }
             .alert("Import Failed", isPresented: .init(
                 get: { importError != nil },
                 set: { if !$0 { importError = nil } }
@@ -60,9 +65,7 @@ struct HomeView: View {
     private var paperList: some View {
         List {
             ForEach(store.papers) { paper in
-                NavigationLink(value: paper.id) {
-                    PaperCardView(paper: paper)
-                }
+                row(for: paper)
                 .swipeActions(edge: .leading) {
                     if paper.status.isFailed {
                         Button("Retry") { store.retry(paper.id) }
@@ -79,6 +82,25 @@ struct HomeView: View {
         .listStyle(.plain)
         .navigationDestination(for: UUID.self) { paperID in
             RawTextView(paperID: paperID)
+        }
+    }
+
+    /// Ready papers open the reader; papers still in the pipeline open the
+    /// raw-text debug view.
+    @ViewBuilder
+    private func row(for paper: Paper) -> some View {
+        if paper.status == .ready {
+            Button {
+                player.load(paper.id)
+                showingReader = true
+            } label: {
+                PaperCardView(paper: paper)
+            }
+            .buttonStyle(.plain)
+        } else {
+            NavigationLink(value: paper.id) {
+                PaperCardView(paper: paper)
+            }
         }
     }
 

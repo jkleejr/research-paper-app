@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0248CFA0FA7123B8C9596298 /* PlayerControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A43BE603C341E35DC1F6098 /* PlayerControlsView.swift */; };
 		0A12186EE6797A6C90A1B730 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E256E6CCDE2AEAAF6B3AB70 /* TTSService.swift */; };
 		0AD8894EC80AE2D3DD685F60 /* GeminiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFE44139FA1FBDE61B2005D /* GeminiClient.swift */; };
+		16AB2D985B5CADBF4265660A /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C194F02A0C11632EA7A9FFC4 /* ReaderView.swift */; };
 		1AC776824B726B0701021316 /* ScriptGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4965F21F7F27AEDDCF5D65E /* ScriptGenerator.swift */; };
 		1B4C7AECE694635FF099B414 /* PaperCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D3E847DC9680F416DE8E1 /* PaperCardView.swift */; };
 		217DAF42DBAB30E6907F6261 /* PaperStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33EB40BF4C1A2C1E17E17B6 /* PaperStore.swift */; };
@@ -28,6 +30,7 @@
 /* Begin PBXFileReference section */
 		0BFCBEAB1D49081B99885500 /* TTSPrefetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSPrefetcher.swift; sourceTree = "<group>"; };
 		2463508E524E3D2944C6EED8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		4A43BE603C341E35DC1F6098 /* PlayerControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerControlsView.swift; sourceTree = "<group>"; };
 		53FABB45AB1AAE359677CD44 /* SentenceSegmenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SentenceSegmenter.swift; sourceTree = "<group>"; };
 		5702D29E675B9E394296BC70 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6E256E6CCDE2AEAAF6B3AB70 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
@@ -39,6 +42,7 @@
 		AD526CADE2229E90D80931BC /* PlayerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerService.swift; sourceTree = "<group>"; };
 		ADFD5505FDB15E2C46F6AF8F /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		B5FDC2408B8B9E05A2FD3A5D /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		C194F02A0C11632EA7A9FFC4 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		C33EB40BF4C1A2C1E17E17B6 /* PaperStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperStore.swift; sourceTree = "<group>"; };
 		D4965F21F7F27AEDDCF5D65E /* ScriptGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptGenerator.swift; sourceTree = "<group>"; };
 		D7182CFDA3A6F24E1B4EE05C /* Secrets.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.example.xcconfig; sourceTree = "<group>"; };
@@ -125,7 +129,9 @@
 			children = (
 				ADFD5505FDB15E2C46F6AF8F /* HomeView.swift */,
 				ED1D3E847DC9680F416DE8E1 /* PaperCardView.swift */,
+				4A43BE603C341E35DC1F6098 /* PlayerControlsView.swift */,
 				F555CC85863DB43D6E3E217A /* RawTextView.swift */,
+				C194F02A0C11632EA7A9FFC4 /* ReaderView.swift */,
 				2463508E524E3D2944C6EED8 /* SettingsView.swift */,
 			);
 			path = Views;
@@ -198,8 +204,10 @@
 				1B4C7AECE694635FF099B414 /* PaperCardView.swift in Sources */,
 				80F395E442AEE497FC43B188 /* PaperReaderApp.swift in Sources */,
 				217DAF42DBAB30E6907F6261 /* PaperStore.swift in Sources */,
+				0248CFA0FA7123B8C9596298 /* PlayerControlsView.swift in Sources */,
 				F11656351C64237431C61C78 /* PlayerService.swift in Sources */,
 				B8530E491766E035E167B10C /* RawTextView.swift in Sources */,
+				16AB2D985B5CADBF4265660A /* ReaderView.swift in Sources */,
 				1AC776824B726B0701021316 /* ScriptGenerator.swift in Sources */,
 				C56919593E2E0288CA74FC28 /* SentenceSegmenter.swift in Sources */,
 				A56C74B3C4AB2497BAE778CD /* SettingsView.swift in Sources */,
