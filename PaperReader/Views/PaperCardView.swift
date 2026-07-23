@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PaperCardView: View {
     @Environment(PlayerService.self) private var player
+    @Environment(PaperStore.self) private var store
     let paper: Paper
 
     private var isCurrentAndPlaying: Bool {
@@ -100,8 +101,14 @@ struct PaperCardView: View {
         case .extracting, .generatingScript:
             ProgressView()
         case .failed:
-            Image(systemName: "exclamationmark.triangle")
-                .foregroundStyle(.red)
+            Button {
+                store.retry(paper.id)
+            } label: {
+                Image(systemName: "arrow.clockwise.circle.fill")
+                    .font(.title)
+                    .foregroundStyle(.orange)
+            }
+            .buttonStyle(.borderless)
         case .imported:
             Image(systemName: "doc.plaintext")
                 .foregroundStyle(.secondary)
