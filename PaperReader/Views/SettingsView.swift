@@ -2,13 +2,16 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
+    @State private var showingKeySetup = false
+
+    private var hasKey: Bool { AppConfig.geminiAPIKey != nil }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Gemini API") {
                     LabeledContent("API Key") {
-                        if AppConfig.geminiAPIKey != nil {
+                        if hasKey {
                             Label("Configured", systemImage: "checkmark.circle.fill")
                                 .foregroundStyle(.green)
                                 .labelStyle(.titleAndIcon)
@@ -18,16 +21,12 @@ struct SettingsView: View {
                                 .labelStyle(.titleAndIcon)
                         }
                     }
+                    Button(hasKey ? "Change API Key…" : "Add API Key…") {
+                        showingKeySetup = true
+                    }
                     LabeledContent("Text model", value: AppConfig.textModel)
                     LabeledContent("Voice model", value: AppConfig.ttsModel)
                     LabeledContent("Voice", value: AppConfig.ttsVoice)
-                }
-                if AppConfig.geminiAPIKey == nil {
-                    Section {
-                        Text("Add your key to PaperReader/Support/Secrets.xcconfig and rebuild. Get a free key at aistudio.google.com/apikey.")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
                 }
             }
             .navigationTitle("Settings")
@@ -36,6 +35,9 @@ struct SettingsView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
                 }
+            }
+            .sheet(isPresented: $showingKeySetup) {
+                APIKeySetupView(canCancel: true)
             }
         }
     }

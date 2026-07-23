@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0248CFA0FA7123B8C9596298 /* PlayerControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A43BE603C341E35DC1F6098 /* PlayerControlsView.swift */; };
+		086E4B2852C8899E5A0561C1 /* APIKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD41A7EC2FAEB6B770FEAF97 /* APIKeyStore.swift */; };
 		0A12186EE6797A6C90A1B730 /* TTSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E256E6CCDE2AEAAF6B3AB70 /* TTSService.swift */; };
 		0AD8894EC80AE2D3DD685F60 /* GeminiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFE44139FA1FBDE61B2005D /* GeminiClient.swift */; };
 		16AB2D985B5CADBF4265660A /* ReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C194F02A0C11632EA7A9FFC4 /* ReaderView.swift */; };
@@ -26,6 +27,7 @@
 		BAF4F2AD8BA8946C8003F3FE /* MiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6085F355DA573175914476F0 /* MiniPlayerView.swift */; };
 		C37508861EE3367560FC3045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E0A860963CAD1B3F635CE2F /* Assets.xcassets */; };
 		C56919593E2E0288CA74FC28 /* SentenceSegmenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FABB45AB1AAE359677CD44 /* SentenceSegmenter.swift */; };
+		C56CE9A45696EC52CEABDCBB /* APIKeySetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60E36E9F7E5CADA70A99CA2 /* APIKeySetupView.swift */; };
 		CE82D21698A82754C611313A /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FDC2408B8B9E05A2FD3A5D /* AppConfig.swift */; };
 		F11656351C64237431C61C78 /* PlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD526CADE2229E90D80931BC /* PlayerService.swift */; };
 /* End PBXBuildFile section */
@@ -40,16 +42,18 @@
 		6085F355DA573175914476F0 /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
 		6E256E6CCDE2AEAAF6B3AB70 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
 		7310DD50DF0ECE7C7A05E66F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
-		86683C37CFB8D683C7EEAA0B /* PaperReader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaperReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		86683C37CFB8D683C7EEAA0B /* PaperReader.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PaperReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		971075AB06D3A0E46F791C84 /* PDFTextExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFTextExtractor.swift; sourceTree = "<group>"; };
 		9754327B72C0E55BE52C68EE /* PaperReaderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperReaderApp.swift; sourceTree = "<group>"; };
 		9E1B350058D23960F6D81FB1 /* GlassStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassStyle.swift; sourceTree = "<group>"; };
+		A60E36E9F7E5CADA70A99CA2 /* APIKeySetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeySetupView.swift; sourceTree = "<group>"; };
 		AD526CADE2229E90D80931BC /* PlayerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerService.swift; sourceTree = "<group>"; };
 		ADFD5505FDB15E2C46F6AF8F /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		B5FDC2408B8B9E05A2FD3A5D /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 		C194F02A0C11632EA7A9FFC4 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		C33EB40BF4C1A2C1E17E17B6 /* PaperStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperStore.swift; sourceTree = "<group>"; };
+		CD41A7EC2FAEB6B770FEAF97 /* APIKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyStore.swift; sourceTree = "<group>"; };
 		D4965F21F7F27AEDDCF5D65E /* ScriptGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptGenerator.swift; sourceTree = "<group>"; };
 		D7182CFDA3A6F24E1B4EE05C /* Secrets.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.example.xcconfig; sourceTree = "<group>"; };
 		DAFE44139FA1FBDE61B2005D /* GeminiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiClient.swift; sourceTree = "<group>"; };
@@ -116,6 +120,7 @@
 		702C3181C14E57C652EFAFEF /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				CD41A7EC2FAEB6B770FEAF97 /* APIKeyStore.swift */,
 				E96CD3B8F231ADDA85C0EED6 /* AudioCache.swift */,
 				DAFE44139FA1FBDE61B2005D /* GeminiClient.swift */,
 				C33EB40BF4C1A2C1E17E17B6 /* PaperStore.swift */,
@@ -142,6 +147,7 @@
 		CD718B6BE11041A45A291C40 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A60E36E9F7E5CADA70A99CA2 /* APIKeySetupView.swift */,
 				9E1B350058D23960F6D81FB1 /* GlassStyle.swift */,
 				ADFD5505FDB15E2C46F6AF8F /* HomeView.swift */,
 				6085F355DA573175914476F0 /* MiniPlayerView.swift */,
@@ -224,6 +230,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C56CE9A45696EC52CEABDCBB /* APIKeySetupView.swift in Sources */,
+				086E4B2852C8899E5A0561C1 /* APIKeyStore.swift in Sources */,
 				CE82D21698A82754C611313A /* AppConfig.swift in Sources */,
 				2ABE5FC46FF38DC73DDEAC8D /* AudioCache.swift in Sources */,
 				0AD8894EC80AE2D3DD685F60 /* GeminiClient.swift in Sources */,
@@ -252,7 +260,6 @@
 /* Begin XCBuildConfiguration section */
 		176867FAE6740ECFF9E28A20 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -313,7 +320,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 42WF5JQ74Y;
 				INFOPLIST_FILE = PaperReader/Support/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Paper Reader";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -329,7 +335,6 @@
 		};
 		D8C0D1694C8491726A14E8FD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -397,7 +402,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 42WF5JQ74Y;
 				INFOPLIST_FILE = PaperReader/Support/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Paper Reader";
 				LD_RUNPATH_SEARCH_PATHS = (

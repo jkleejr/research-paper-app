@@ -9,7 +9,7 @@ enum GeminiError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .missingAPIKey:
-            return "No Gemini API key. Add it in Secrets.xcconfig and rebuild."
+            return "No Gemini API key. Add yours in Settings."
         case .http(let status, let message):
             return "Gemini API error \(status): \(message)"
         case .emptyResponse:
@@ -104,13 +104,21 @@ actor GeminiClient {
         return audio
     }
 
+    /// Cheap round-trip to confirm a key works before it's saved.
+    func validate(apiKey: String) async throws {
+        _ = try await generate(model: AppConfig.textModel, systemInstruction: nil,
+                               prompt: "Reply with OK.", generationConfig: nil,
+                               apiKeyOverride: apiKey)
+    }
+
     // MARK: - Core request with retry
 
     private func generate(model: String,
                           systemInstruction: String?,
                           prompt: String,
-                          generationConfig: GenerationConfig?) async throws -> [Part] {
-        guard let apiKey = AppConfig.geminiAPIKey else { throw GeminiError.missingAPIKey }
+                          generationConfig: GenerationConfig?,
+                          apiKeyOverride: String? = nil) async throws -> [Part] {
+        guard let apiKey = apiKeyOverride ?? AppConfig.geminiAPIKey else { throw GeminiError.missingAPIKey }
 
         var urlRequest = URLRequest(url: URL(string: "\(AppConfig.apiBase)/models/\(model):generateContent")!)
         urlRequest.httpMethod = "POST"

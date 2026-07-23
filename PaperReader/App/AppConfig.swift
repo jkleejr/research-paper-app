@@ -6,10 +6,8 @@ enum AppConfig {
     static let ttsVoice = "Kore"
     static let apiBase = "https://generativelanguage.googleapis.com/v1beta"
 
-    /// Gemini API key injected from Secrets.xcconfig via Info.plist. Nil when unset.
+    /// The user's Gemini API key from the Keychain. Nil until they add one in Settings.
     static var geminiAPIKey: String? {
-        guard let key = Bundle.main.object(forInfoDictionaryKey: "GEMINI_API_KEY") as? String,
-              !key.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
-        return key.trimmingCharacters(in: .whitespaces)
+        APIKeyStore.load()
     }
 }

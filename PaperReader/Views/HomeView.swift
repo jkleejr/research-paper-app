@@ -6,6 +6,7 @@ struct HomeView: View {
     @State private var showingImporter = false
     @State private var showingSettings = false
     @State private var showingReader = false
+    @State private var showingKeySetup = false
     @State private var importError: String?
 
     var body: some View {
@@ -38,7 +39,12 @@ struct HomeView: View {
                 MiniPlayerView { showingReader = true }
             }
             .task {
+                showingKeySetup = AppConfig.geminiAPIKey == nil
                 store.resumeUnfinished()
+            }
+            .sheet(isPresented: $showingKeySetup) {
+                APIKeySetupView()
+                    .interactiveDismissDisabled()
             }
             .fileImporter(isPresented: $showingImporter, allowedContentTypes: [.pdf]) { result in
                 switch result {
