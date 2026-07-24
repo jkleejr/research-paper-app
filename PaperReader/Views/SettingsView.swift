@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showingKeySetup = false
+    @State private var voice = AppConfig.ttsVoice
 
     private var hasKey: Bool { AppConfig.geminiAPIKey != nil }
 
@@ -26,7 +27,19 @@ struct SettingsView: View {
                     }
                     LabeledContent("Text model", value: AppConfig.textModel)
                     LabeledContent("Voice model", value: AppConfig.ttsModel)
-                    LabeledContent("Voice", value: AppConfig.ttsVoice)
+                }
+
+                Section {
+                    Picker("Voice", selection: $voice) {
+                        ForEach(AppConfig.voiceOptions, id: \.name) { option in
+                            Text("\(option.name) · \(option.style)").tag(option.name)
+                        }
+                    }
+                    .onChange(of: voice) { AppConfig.ttsVoice = voice }
+                } header: {
+                    Text("Narration")
+                } footer: {
+                    Text("The voice applies to audio generated from now on. Papers keep audio that was already generated, so changing mid-paper mixes voices.")
                 }
             }
             .navigationTitle("Settings")
