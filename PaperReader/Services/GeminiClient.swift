@@ -4,6 +4,7 @@ enum GeminiError: LocalizedError {
     case missingAPIKey
     case http(status: Int, message: String)
     case emptyResponse
+    case noContent(String)
     case network(String)
 
     var errorDescription: String? {
@@ -14,6 +15,8 @@ enum GeminiError: LocalizedError {
             return "Gemini API error \(status): \(message)"
         case .emptyResponse:
             return "Gemini returned an empty response."
+        case .noContent(let reason):
+            return "Gemini ended the response without content (\(reason)). Tap retry to try again."
         case .network(let message):
             return "Network error: \(message)"
         }
@@ -34,7 +37,9 @@ actor GeminiClient {
     }
 
     struct Content: Codable {
-        var parts: [Part]
+        /// Optional because thinking models can end a response with no parts
+        /// (runaway reasoning, MAX_TOKENS, safety stop).
+        var parts: [Part]?
         var role: String?
     }
 
@@ -42,6 +47,11 @@ actor GeminiClient {
         var responseMimeType: String?
         var responseModalities: [String]?
         var speechConfig: SpeechConfig?
+        var thinkingConfig: ThinkingConfig?
+    }
+
+    struct ThinkingConfig: Encodable {
+        var thinkingLevel: String
     }
 
     struct SpeechConfig: Encodable {
@@ -59,7 +69,10 @@ actor GeminiClient {
     }
 
     private struct Response: Decodable {
-        struct Candidate: Decodable { var content: Content? }
+        struct Candidate: Decodable {
+            var content: Content?
+            var finishReason: String?
+        }
         var candidates: [Candidate]?
         var error: APIError?
     }
@@ -82,7 +95,11 @@ actor GeminiClient {
                       systemInstruction: String? = nil,
                       prompt: String,
                       responseMimeType: String? = nil) async throws -> String {
-        let config = responseMimeType.map { GenerationConfig(responseMimeType: $0) }
+        // Text calls are mechanical (cleanup, title extraction) — minimal
+        // thinking avoids paying for reasoning tokens and the no-content
+        // responses runaway reasoning can produce.
+        let config = GenerationConfig(responseMimeType: responseMimeType,
+                                      thinkingConfig: .init(thinkingLevel: "minimal"))
         let parts = try await generate(model: model, systemInstruction: systemInstruction,
                                        prompt: prompt, generationConfig: config)
         let text = parts.compactMap(\.text).joined()
@@ -146,10 +163,18 @@ actor GeminiClient {
 
                 if status == 200 {
                     let decoded = try JSONDecoder().decode(Response.self, from: data)
-                    guard let parts = decoded.candidates?.first?.content?.parts, !parts.isEmpty else {
-                        throw GeminiError.emptyResponse
+                    let candidate = decoded.candidates?.first
+                    if let parts = candidate?.content?.parts, !parts.isEmpty {
+                        return parts
                     }
-                    return parts
+                    let reason = candidate?.finishReason ?? "no candidates"
+                    // A clean STOP with no parts is the model intentionally
+                    // returning nothing (e.g. a references-only chunk).
+                    if reason == "STOP" { throw GeminiError.emptyResponse }
+                    // Anything else (MAX_TOKENS, safety) is usually transient
+                    // for this content — retry with backoff.
+                    lastError = GeminiError.noContent(reason)
+                    continue
                 }
 
                 let message = (try? JSONDecoder().decode(Response.self, from: data))?.error?.message
