@@ -191,6 +191,7 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					84F6817D55EEA4B25E84B36D = {
+						DevelopmentTeam = 42WF5JQ74Y;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -320,6 +321,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 42WF5JQ74Y;
 				INFOPLIST_FILE = PaperReader/Support/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Paper Reader";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -402,6 +404,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 42WF5JQ74Y;
 				INFOPLIST_FILE = PaperReader/Support/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Paper Reader";
 				LD_RUNPATH_SEARCH_PATHS = (
