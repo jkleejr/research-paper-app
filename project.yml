@@ -9,7 +9,11 @@ targets:
     type: application
     platform: iOS
     sources:
-      - PaperReader
+      # xcconfig files here are local developer scratch, not app inputs —
+      # keep them out of the target so a key can never ride along in a build.
+      - path: PaperReader
+        excludes:
+          - "Support/*.xcconfig"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jklwjr.PaperReader
@@ -24,7 +28,7 @@ targets:
       properties:
         CFBundleDisplayName: Paper Reader
         CFBundleShortVersionString: "1.1"
-        CFBundleVersion: "3"
+        CFBundleVersion: "4"
         # HTTPS-only networking -> exempt from export compliance docs; skips
         # the manual compliance question on every TestFlight upload.
         ITSAppUsesNonExemptEncryption: false

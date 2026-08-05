@@ -30,6 +30,7 @@
 		C56CE9A45696EC52CEABDCBB /* APIKeySetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60E36E9F7E5CADA70A99CA2 /* APIKeySetupView.swift */; };
 		CE82D21698A82754C611313A /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FDC2408B8B9E05A2FD3A5D /* AppConfig.swift */; };
 		F11656351C64237431C61C78 /* PlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD526CADE2229E90D80931BC /* PlayerService.swift */; };
+		F2BA1513228BF20B60A692D0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F69EDDCFAF5C18CC298AE8BC /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +44,6 @@
 		6E256E6CCDE2AEAAF6B3AB70 /* TTSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSService.swift; sourceTree = "<group>"; };
 		7310DD50DF0ECE7C7A05E66F /* Paper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Paper.swift; sourceTree = "<group>"; };
 		86683C37CFB8D683C7EEAA0B /* PaperReader.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PaperReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		971075AB06D3A0E46F791C84 /* PDFTextExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFTextExtractor.swift; sourceTree = "<group>"; };
 		9754327B72C0E55BE52C68EE /* PaperReaderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperReaderApp.swift; sourceTree = "<group>"; };
 		9E1B350058D23960F6D81FB1 /* GlassStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassStyle.swift; sourceTree = "<group>"; };
@@ -55,11 +55,11 @@
 		C33EB40BF4C1A2C1E17E17B6 /* PaperStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperStore.swift; sourceTree = "<group>"; };
 		CD41A7EC2FAEB6B770FEAF97 /* APIKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyStore.swift; sourceTree = "<group>"; };
 		D4965F21F7F27AEDDCF5D65E /* ScriptGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptGenerator.swift; sourceTree = "<group>"; };
-		D7182CFDA3A6F24E1B4EE05C /* Secrets.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.example.xcconfig; sourceTree = "<group>"; };
 		DAFE44139FA1FBDE61B2005D /* GeminiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiClient.swift; sourceTree = "<group>"; };
 		E96CD3B8F231ADDA85C0EED6 /* AudioCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCache.swift; sourceTree = "<group>"; };
 		ED1D3E847DC9680F416DE8E1 /* PaperCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperCardView.swift; sourceTree = "<group>"; };
 		F555CC85863DB43D6E3E217A /* RawTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawTextView.swift; sourceTree = "<group>"; };
+		F69EDDCFAF5C18CC298AE8BC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -92,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				3E0A860963CAD1B3F635CE2F /* Assets.xcassets */,
+				F69EDDCFAF5C18CC298AE8BC /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -138,8 +139,6 @@
 			isa = PBXGroup;
 			children = (
 				5702D29E675B9E394296BC70 /* Info.plist */,
-				D7182CFDA3A6F24E1B4EE05C /* Secrets.example.xcconfig */,
-				92DF3D88FA5DD923AD7B20C0 /* Secrets.xcconfig */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -221,6 +220,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C37508861EE3367560FC3045 /* Assets.xcassets in Resources */,
+				F2BA1513228BF20B60A692D0 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,9 +1,11 @@
 import SwiftUI
 
-/// Collects a personal Gemini API key: shown modally at first launch (not
-/// dismissible until a key is saved) and from Settings to change the key.
+/// Collects a personal Gemini API key: offered at first launch and from
+/// Settings to change the key. Always dismissible — the library and imported
+/// papers stay browsable without a key, and playback prompts for one.
 struct APIKeySetupView: View {
-    var canCancel = false
+    /// Label for the escape hatch: "Cancel" from Settings, "Not Now" at first run.
+    var cancelTitle = "Cancel"
 
     @Environment(\.dismiss) private var dismiss
     @State private var key = ""
@@ -14,13 +16,26 @@ struct APIKeySetupView: View {
         NavigationStack {
             Form {
                 Section {
-                    Text("Paper Reader uses Google's Gemini API to clean up papers and generate audio. Everyone uses their own API key, so your usage stays on your own Google account.")
+                    Text("Paper Reader uses Google's Gemini API to clean up papers and read them aloud. Everyone brings their own API key, so your usage is billed to your own Google account and never to anyone else's.")
                         .font(.callout)
-                    Link(destination: URL(string: "https://aistudio.google.com/apikey")!) {
+                    Link(destination: AppConfig.apiKeySignupURL) {
                         Label("Get a key at aistudio.google.com", systemImage: "key.fill")
                     }
                 } footer: {
-                    Text("Reading text works on the free tier. Generating audio uses Gemini's text-to-speech model, which requires billing to be enabled on your Google account.")
+                    Text("Reading text works on the free tier. Generating audio uses Gemini's text-to-speech model, which requires billing enabled on your Google account.")
+                }
+
+                Section {
+                    Label("Your key is stored in the iOS Keychain on this device only.", systemImage: "lock.fill")
+                        .font(.footnote)
+                    Label("Text from the papers you import is sent to Google to be cleaned up and narrated. Nothing is sent anywhere else.", systemImage: "arrow.up.forward.app.fill")
+                        .font(.footnote)
+                    Link(destination: AppConfig.privacyPolicyURL) {
+                        Label("Privacy Policy", systemImage: "hand.raised.fill")
+                            .font(.footnote)
+                    }
+                } header: {
+                    Text("What Happens To Your Data")
                 }
 
                 Section("Your API Key") {
@@ -57,10 +72,8 @@ struct APIKeySetupView: View {
             .navigationTitle("Gemini API Key")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if canCancel {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button("Cancel") { dismiss() }
-                    }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(cancelTitle) { dismiss() }
                 }
             }
         }

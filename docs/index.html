@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paper Reader — Support</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem;
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  h1 { font-size: 1.75rem; margin-bottom: .25rem; }
+  h2 { font-size: 1.15rem; margin-top: 2.25rem; }
+  .sub { color: #888; margin-top: 0; }
+  dt { font-weight: 600; margin-top: 1.1rem; }
+  dd { margin: .25rem 0 0; }
+</style>
+</head>
+<body>
+<h1>Paper Reader — Support</h1>
+<p class="sub">Listen to research papers instead of reading them.</p>
+
+<p>Paper Reader takes a research paper PDF, cleans up the text (dropping page furniture,
+citation clutter, and table debris), and narrates it with Google's Gemini text-to-speech
+so you can listen with the screen off.</p>
+
+<h2>Getting started</h2>
+<ol>
+  <li>Get a Gemini API key at <a href="https://aistudio.google.com/apikey">aistudio.google.com/apikey</a>.</li>
+  <li>Paste it into Paper Reader when prompted, or in Settings &rsaquo; Add API Key.</li>
+  <li>Tap <strong>+</strong> and pick a PDF from Files or iCloud Drive.</li>
+</ol>
+
+<h2>Why do I need my own API key?</h2>
+<p>Paper Reader has no server and no subscription. Every request goes straight from your
+phone to Google using your key, so your usage is billed to your own Google account and
+your papers are never routed through anyone else's infrastructure.</p>
+
+<h2>What does it cost?</h2>
+<p>Text cleanup runs on Gemini's free tier for most papers. Narration uses Gemini's
+text-to-speech model, which requires billing enabled on your Google account — expect
+roughly $1–3 of Google usage for a typical full-length paper. Paper Reader itself takes
+no cut and charges nothing beyond the App Store price.</p>
+
+<h2>Troubleshooting</h2>
+<dl>
+  <dt>"That key didn't work"</dt>
+  <dd>Check the key was pasted whole with no trailing spaces, and that the Google project
+      it belongs to has the Generative Language API enabled.</dd>
+
+  <dt>A paper fails partway through</dt>
+  <dd>Swipe right on the paper and tap <strong>Retry</strong>. Work already completed is
+      kept, so a retry resumes rather than starting over and re-spending tokens.</dd>
+
+  <dt>Audio stops generating</dt>
+  <dd>Narration requires billing enabled on your Google account. Text cleanup works on the
+      free tier, but text-to-speech does not.</dd>
+
+  <dt>Scanned PDFs come out empty</dt>
+  <dd>Paper Reader reads embedded PDF text and does not run OCR, so image-only scans
+      cannot be narrated.</dd>
+</dl>
+
+<h2>Privacy</h2>
+<p>Nothing is collected by the developer. See the <a href="privacy.html">Privacy Policy</a>.</p>
+
+<h2>Contact</h2>
+<p><a href="mailto:jklwjr@gmail.com">jklwjr@gmail.com</a></p>
+</body>
+</html>
