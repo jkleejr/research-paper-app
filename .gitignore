@@ -1,5 +1,6 @@
 # Secrets — never commit API keys
 PaperReader/Support/Secrets.xcconfig
+*.xcconfig
 
 # Xcode
 DerivedData/
