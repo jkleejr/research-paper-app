@@ -31,21 +31,19 @@ Working notes for the first public App Store release. Version **1.1 (4)**, bundl
 
 ## 2. Still to do — outside the code
 
-### Host the two pages (required before you can fill in App Store Connect)
-`docs/privacy.html` and `docs/index.html` are written and ready. Enable GitHub Pages on the
-public `jkleejr/research-paper-app` repo: **Settings → Pages → Source: main branch, /docs
-folder**. That produces the URLs already compiled into the app:
+### Hosted pages — done
+GitHub Pages serves `docs/` from the `main` branch at the URLs compiled into the app:
 
 - Privacy Policy — `https://jkleejr.github.io/research-paper-app/privacy.html`
 - Support — `https://jkleejr.github.io/research-paper-app/`
 
-If you host them anywhere else, update `AppConfig.privacyPolicyURL` / `supportURL` and rebuild.
+If you ever move them, update `AppConfig.privacyPolicyURL` / `supportURL` and rebuild.
 
-### Delete the stale key on your Mac
-`PaperReader/Support/Secrets.xcconfig` still contains a plaintext Gemini key
-(`AQ.Ab8RN6Jf…`). It is gitignored, never was committed, and no longer builds into the app —
-but revoke it in Google AI Studio and delete the file. `Secrets.example.xcconfig` is committed
-to the public repo (empty value, harmless) and can go too.
+### Revoke the old key — your move
+The `Secrets.xcconfig` that held it has been deleted, but the key itself
+(`AQ.Ab8RN6Jf…`) is still live until you revoke it at
+[aistudio.google.com/apikey](https://aistudio.google.com/apikey). It was never committed and
+hasn't been read by any build since the move to per-user keys, but revoke it anyway.
 
 ### Screenshots — done
 Five 1320×2868 (6.9") images are in `screenshots/appstore/`, ready to upload in filename order:
