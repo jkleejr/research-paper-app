@@ -16,6 +16,7 @@
 		1B4C7AECE694635FF099B414 /* PaperCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1D3E847DC9680F416DE8E1 /* PaperCardView.swift */; };
 		217DAF42DBAB30E6907F6261 /* PaperStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33EB40BF4C1A2C1E17E17B6 /* PaperStore.swift */; };
 		2ABE5FC46FF38DC73DDEAC8D /* AudioCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96CD3B8F231ADDA85C0EED6 /* AudioCache.swift */; };
+		6C4CE206F519E5367C405E87 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1793F5F09B8A496BD7799B9 /* ScreenshotTests.swift */; };
 		6DBC30E0B3F5F4DEE01F4D2C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFD5505FDB15E2C46F6AF8F /* HomeView.swift */; };
 		7F1B7B691677DA793EB9722C /* GlassStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1B350058D23960F6D81FB1 /* GlassStyle.swift */; };
 		80F395E442AEE497FC43B188 /* PaperReaderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9754327B72C0E55BE52C68EE /* PaperReaderApp.swift */; };
@@ -32,6 +33,16 @@
 		F11656351C64237431C61C78 /* PlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD526CADE2229E90D80931BC /* PlayerService.swift */; };
 		F2BA1513228BF20B60A692D0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F69EDDCFAF5C18CC298AE8BC /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A90AC765A31F84A50931F73E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 881748060D3D0F573A304C5C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84F6817D55EEA4B25E84B36D;
+			remoteInfo = PaperReader;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0BFCBEAB1D49081B99885500 /* TTSPrefetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TTSPrefetcher.swift; sourceTree = "<group>"; };
@@ -56,10 +67,12 @@
 		CD41A7EC2FAEB6B770FEAF97 /* APIKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyStore.swift; sourceTree = "<group>"; };
 		D4965F21F7F27AEDDCF5D65E /* ScriptGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptGenerator.swift; sourceTree = "<group>"; };
 		DAFE44139FA1FBDE61B2005D /* GeminiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiClient.swift; sourceTree = "<group>"; };
+		E1793F5F09B8A496BD7799B9 /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 		E96CD3B8F231ADDA85C0EED6 /* AudioCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioCache.swift; sourceTree = "<group>"; };
 		ED1D3E847DC9680F416DE8E1 /* PaperCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperCardView.swift; sourceTree = "<group>"; };
 		F555CC85863DB43D6E3E217A /* RawTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawTextView.swift; sourceTree = "<group>"; };
 		F69EDDCFAF5C18CC298AE8BC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F6DCD57DED894A8A4771ADFD /* PaperReaderUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PaperReaderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -67,6 +80,7 @@
 			isa = PBXGroup;
 			children = (
 				45CD5161784A76C41FD37CF1 /* PaperReader */,
+				98B9ADCF67C1ABECDA3B0615 /* PaperReaderUITests */,
 				332F82572F781AF3D2AE43E1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -84,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				86683C37CFB8D683C7EEAA0B /* PaperReader.app */,
+				F6DCD57DED894A8A4771ADFD /* PaperReaderUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -135,6 +150,14 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		98B9ADCF67C1ABECDA3B0615 /* PaperReaderUITests */ = {
+			isa = PBXGroup;
+			children = (
+				E1793F5F09B8A496BD7799B9 /* ScreenshotTests.swift */,
+			);
+			path = PaperReaderUITests;
+			sourceTree = "<group>";
+		};
 		A257B573701690F4407A06D5 /* Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -180,6 +203,24 @@
 			productReference = 86683C37CFB8D683C7EEAA0B /* PaperReader.app */;
 			productType = "com.apple.product-type.application";
 		};
+		8E9AB67C03324B7BE2ADEC6F /* PaperReaderUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8B5144D345A5F34D32ABC3A8 /* Build configuration list for PBXNativeTarget "PaperReaderUITests" */;
+			buildPhases = (
+				D13FAAC05FC70A61D81541DE /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5C546B895EA00584BC5F16EF /* PBXTargetDependency */,
+			);
+			name = PaperReaderUITests;
+			packageProductDependencies = (
+			);
+			productName = PaperReaderUITests;
+			productReference = F6DCD57DED894A8A4771ADFD /* PaperReaderUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -192,6 +233,11 @@
 					84F6817D55EEA4B25E84B36D = {
 						DevelopmentTeam = 42WF5JQ74Y;
 						ProvisioningStyle = Automatic;
+					};
+					8E9AB67C03324B7BE2ADEC6F = {
+						DevelopmentTeam = 42WF5JQ74Y;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 84F6817D55EEA4B25E84B36D;
 					};
 				};
 			};
@@ -210,6 +256,7 @@
 			projectRoot = "";
 			targets = (
 				84F6817D55EEA4B25E84B36D /* PaperReader */,
+				8E9AB67C03324B7BE2ADEC6F /* PaperReaderUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -256,7 +303,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D13FAAC05FC70A61D81541DE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6C4CE206F519E5367C405E87 /* ScreenshotTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5C546B895EA00584BC5F16EF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 84F6817D55EEA4B25E84B36D /* PaperReader */;
+			targetProxy = A90AC765A31F84A50931F73E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		176867FAE6740ECFF9E28A20 /* Release */ = {
@@ -314,6 +377,26 @@
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
+		};
+		46655EBD6A58ADED20A23AD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 42WF5JQ74Y;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jklwjr.PaperReaderUITests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = PaperReader;
+			};
+			name = Debug;
 		};
 		6BB54F601FB147B2D41DA0E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -398,6 +481,26 @@
 			};
 			name = Debug;
 		};
+		DF10F2295D1428E20B3800A0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 42WF5JQ74Y;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jklwjr.PaperReaderUITests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = PaperReader;
+			};
+			name = Release;
+		};
 		E05D8F063296BD418AFCEDF2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -426,6 +529,15 @@
 			buildConfigurations = (
 				D8C0D1694C8491726A14E8FD /* Debug */,
 				176867FAE6740ECFF9E28A20 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8B5144D345A5F34D32ABC3A8 /* Build configuration list for PBXNativeTarget "PaperReaderUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				46655EBD6A58ADED20A23AD9 /* Debug */,
+				DF10F2295D1428E20B3800A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -37,3 +37,36 @@ targets:
           - UIInterfaceOrientationPortrait
         UIBackgroundModes:
           - audio
+
+  # Drives the app to capture App Store screenshots at full device resolution.
+  # Test target only — never part of the shipped app.
+  PaperReaderUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - PaperReaderUITests
+    dependencies:
+      - target: PaperReader
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.jklwjr.PaperReaderUITests
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 42WF5JQ74Y
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1"
+
+schemes:
+  PaperReader:
+    build:
+      targets:
+        PaperReader: all
+        PaperReaderUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - PaperReaderUITests
+    archive:
+      config: Release

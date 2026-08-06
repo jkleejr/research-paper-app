@@ -41,6 +41,14 @@ enum AppConfig {
 
     /// The user's Gemini API key from the Keychain. Nil until they add one in Settings.
     static var geminiAPIKey: String? {
-        APIKeyStore.load()
+        #if DEBUG
+        // Screenshot/UI-test builds can stand in a key without touching the
+        // Keychain: launch with `-uiTestAPIKey <value>`. Debug only — App Store
+        // builds always read the Keychain.
+        if let injected = UserDefaults.standard.string(forKey: "uiTestAPIKey"), !injected.isEmpty {
+            return injected
+        }
+        #endif
+        return APIKeyStore.load()
     }
 }

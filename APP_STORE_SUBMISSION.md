@@ -25,6 +25,9 @@ Working notes for the first public App Store release. Version **1.1 (4)**, bundl
   from the embedded-key era and nothing reads `GEMINI_API_KEY` anymore, but excluding them
   guarantees a key can never ride along in a build. Git history is clean of keys (verified).
 - Release build passes: `xcodebuild -scheme PaperReader -configuration Release build`.
+- **Screenshot pipeline** — a `PaperReaderUITests` target drives the app and captures every
+  screen at full device resolution, with a seeding tool that stages a sample library. Test
+  target only; it is not part of the shipped app. See `Tools/screenshots/README.md`.
 
 ## 2. Still to do — outside the code
 
@@ -44,10 +47,20 @@ If you host them anywhere else, update `AppConfig.privacyPolicyURL` / `supportUR
 but revoke it in Google AI Studio and delete the file. `Secrets.example.xcconfig` is committed
 to the public repo (empty value, harmless) and can go too.
 
-### Screenshots
-Required: 6.9" display (iPhone 17 Pro Max or similar), 3–10 images. Since the app is iPhone-only,
-that's the only mandatory size. Good set: empty state with the key banner, a paper mid-processing,
-the reader with text highlighting, the player controls, Settings with voice picker.
+### Screenshots — done
+Five 1320×2868 (6.9") images are in `screenshots/appstore/`, ready to upload in filename order:
+
+| # | Screen | Caption |
+|---|---|---|
+| 01 | Library | Turn research papers into audio |
+| 02 | Reader, playing | Follow along, sentence by sentence |
+| 03 | Voice picker | Eight narration voices |
+| 04 | Library + mini player | Pick up exactly where you left off |
+| 05 | API key screen | Bring your own API key |
+
+6.9" is the only size App Store Connect requires, since the app is iPhone-only. The whole
+pipeline is repeatable — see `Tools/screenshots/README.md`. Raw unframed captures are in
+`screenshots/raw/` if you want to recompose or use a different set.
 
 ## 3. App Store Connect fields
 
