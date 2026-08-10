@@ -54,12 +54,16 @@ If you ever move them, update `AppConfig.privacyPolicyURL` / `supportURL` and re
 Nothing since build 3 has run on hardware, and the simulator can't tell you about audio
 sessions, background playback, lock screen controls, or how fast extraction really is.
 
-**Delete Paper Reader from the phone first** — that clears its Keychain entry too, so you get a
-genuine first launch. Then Xcode → your iPhone → Product → Run, and check:
+**Delete Paper Reader from the phone first.** That resets `UserDefaults`, so the sample
+reinstalls and you see a real first launch. It does *not* clear the API key: iOS keeps Keychain
+items after an app is deleted (they're scoped to the team identifier, not the app container), so
+a key entered on an earlier build is still there. Use Settings → **Remove API Key** to test the
+no-key path, then add it back. Then Xcode → your iPhone → Product → Run, and check:
 
 - The library opens with the **SAMPLE** paper and no key prompt; it plays.
 - Lock the phone: audio continues, lock screen shows title and controls.
-- Tap **+** → the key screen appears; saving a key continues to the file picker.
+- With no key stored, tapping **+** opens the key screen; saving a key there continues straight
+  on to the file picker.
 - Import `mksc.2018.1095.pdf` (the paper whose text was broken) and read a few paragraphs: no
   run-together words, no "e ff ects", headings on their own lines. Note how long
   "Extracting text…" takes — ~7s for 24 pages on a Mac, so expect 15–30s on device.
