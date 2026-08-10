@@ -12,9 +12,13 @@ enum SentenceSegmenter {
         tokenizer.enumerateTokens(in: script.startIndex..<script.endIndex) { range, _ in
             let sentence = script[range].trimmingCharacters(in: .whitespacesAndNewlines)
             if !sentence.isEmpty {
-                // Merge fragments (tokenizer artifacts like a stray "3.1" or "Dr.")
-                // into the previous sentence.
-                if sentence.count < 15, let last = texts.indices.last {
+                // Merge fragments (tokenizer artifacts like a stray "3.1" or a
+                // trailing clause) into the previous sentence. A fragment
+                // starting with a capital is a heading like "Abstract" or
+                // "Introduction", which should stand on its own rather than
+                // being glued onto the end of the title.
+                let isContinuation = sentence.first.map { $0.isLowercase || $0.isNumber } ?? false
+                if sentence.count < 15, isContinuation, let last = texts.indices.last {
                     texts[last] += " " + sentence
                 } else {
                     texts.append(sentence)

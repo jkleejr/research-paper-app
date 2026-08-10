@@ -32,6 +32,7 @@
 		C56919593E2E0288CA74FC28 /* SentenceSegmenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FABB45AB1AAE359677CD44 /* SentenceSegmenter.swift */; };
 		C56CE9A45696EC52CEABDCBB /* APIKeySetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60E36E9F7E5CADA70A99CA2 /* APIKeySetupView.swift */; };
 		CE82D21698A82754C611313A /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5FDC2408B8B9E05A2FD3A5D /* AppConfig.swift */; };
+		F01E470BE3C69B5B2BFD66B9 /* TextRepair.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16A7CDA08A21E6B0A2E07A0 /* TextRepair.swift */; };
 		F11656351C64237431C61C78 /* PlayerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD526CADE2229E90D80931BC /* PlayerService.swift */; };
 		F2BA1513228BF20B60A692D0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F69EDDCFAF5C18CC298AE8BC /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
@@ -68,6 +69,7 @@
 		C194F02A0C11632EA7A9FFC4 /* ReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderView.swift; sourceTree = "<group>"; };
 		C33EB40BF4C1A2C1E17E17B6 /* PaperStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaperStore.swift; sourceTree = "<group>"; };
 		CD41A7EC2FAEB6B770FEAF97 /* APIKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeyStore.swift; sourceTree = "<group>"; };
+		D16A7CDA08A21E6B0A2E07A0 /* TextRepair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRepair.swift; sourceTree = "<group>"; };
 		D1C6FE1DBCBF58E696BC240B /* SampleLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleLibrary.swift; sourceTree = "<group>"; };
 		D4965F21F7F27AEDDCF5D65E /* ScriptGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptGenerator.swift; sourceTree = "<group>"; };
 		DAFE44139FA1FBDE61B2005D /* GeminiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiClient.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 				D1C6FE1DBCBF58E696BC240B /* SampleLibrary.swift */,
 				D4965F21F7F27AEDDCF5D65E /* ScriptGenerator.swift */,
 				53FABB45AB1AAE359677CD44 /* SentenceSegmenter.swift */,
+				D16A7CDA08A21E6B0A2E07A0 /* TextRepair.swift */,
 				0BFCBEAB1D49081B99885500 /* TTSPrefetcher.swift */,
 				6E256E6CCDE2AEAAF6B3AB70 /* TTSService.swift */,
 			);
@@ -308,6 +311,7 @@
 				A56C74B3C4AB2497BAE778CD /* SettingsView.swift in Sources */,
 				B33380F9127B6F863B692B4A /* TTSPrefetcher.swift in Sources */,
 				0A12186EE6797A6C90A1B730 /* TTSService.swift in Sources */,
+				F01E470BE3C69B5B2BFD66B9 /* TextRepair.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

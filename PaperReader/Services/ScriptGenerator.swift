@@ -57,6 +57,10 @@ struct ScriptGenerator {
     short plain lines. Convert notation for listening: "et al." becomes "and colleagues", spell out \
     Greek letters and simple math so they read naturally.
 
+    PDF extraction sometimes drops spaces, so a few words may arrive run together \
+    ("themagnitudeofthesebubbles") or split mid-word across a line ("man agers"). Restore the \
+    correct spacing. Do not reword anything else to fix it.
+
     If the excerpt is entirely references, acknowledgments, or other removed material, output an \
     empty response.
     """

@@ -66,9 +66,7 @@ final class ScreenshotTests: XCTestCase {
         print("SAMPLE PLAYBACK OK — advanced \(started) -> \(reached) of 44")
 
         // Back to the library; the mini player now shows what's playing.
-        // Highest xmark = the reader's close button, not the mini player's.
-        waitForHittable("xmark", lowest: false)?.tap()
-        XCTAssertTrue(library.waitForExistence(timeout: 5))
+        XCTAssertTrue(returnToLibrary(), "reader wouldn't close\n\(app.debugDescription)")
         Thread.sleep(forTimeInterval: 1.0)
         snap("05-library-miniplayer")
 
@@ -77,6 +75,7 @@ final class ScreenshotTests: XCTestCase {
             return XCTFail("no settings button\n\(app.debugDescription)")
         }
         gear.tap()
+        Thread.sleep(forTimeInterval: 0.4)
         XCTAssertTrue(app.staticTexts["Settings"].waitForExistence(timeout: 5),
                       "settings never appeared\n\(app.debugDescription)")
         Thread.sleep(forTimeInterval: 0.6)
@@ -125,6 +124,22 @@ final class ScreenshotTests: XCTestCase {
             Thread.sleep(forTimeInterval: 0.3)
         } while Date() < deadline
         return nil
+    }
+
+    /// Closes the reader and waits until the library is genuinely in front.
+    ///
+    /// The reader's close button can report itself hittable before the cover
+    /// has settled, so a single tap sometimes lands on nothing. The library's
+    /// gear button being hittable is the only reliable signal that we're back —
+    /// the mini player shows a "Sentence N of M" label too, so that isn't one.
+    private func returnToLibrary() -> Bool {
+        for _ in 0..<6 {
+            if waitForHittable("gearshape", timeout: 2) != nil { return true }
+            // Highest xmark = the reader's close button, not the mini player's.
+            waitForHittable("xmark", timeout: 2, lowest: false)?.tap()
+            Thread.sleep(forTimeInterval: 0.8)
+        }
+        return false
     }
 
     /// Current position from the reader's "Sentence N of M" counter.

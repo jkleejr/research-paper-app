@@ -27,7 +27,10 @@ enum PDFTextExtractor {
 
         var rawPages: [String] = []
         for i in 0..<document.pageCount {
-            rawPages.append(document.page(at: i)?.string ?? "")
+            // Compatibility mapping folds ligature glyphs (ﬀ, ﬁ) back into
+            // plain letters, which otherwise survive into the narration.
+            let page = document.page(at: i)?.string ?? ""
+            rawPages.append(page.precomposedStringWithCompatibilityMapping)
         }
 
         let totalChars = rawPages.reduce(0) { $0 + $1.count }
@@ -43,17 +46,21 @@ enum PDFTextExtractor {
 
     private static func clean(pages: [String]) -> [String] {
         let repeatedLines = findRepeatedLines(in: pages)
-        return pages.map { page in
+        let dehyphenated = pages.map { page -> String in
             var lines = page.components(separatedBy: .newlines)
             lines = lines.filter { line in
                 let key = normalizeLine(line)
                 return key.isEmpty || !repeatedLines.contains(key)
             }
-            var text = lines.joined(separator: "\n")
-            text = joinHyphenatedLineBreaks(text)
-            text = collapseWhitespace(text)
-            return text
+            // Before de-gluing: a word split across lines ("man-\nagers") would
+            // otherwise leave an unresolvable fragment at the head of a run.
+            return joinHyphenatedLineBreaks(lines.joined(separator: "\n"))
         }
+
+        // Built once across the whole document, so a word spaced correctly on
+        // one page repairs the pages where it isn't.
+        let repair = TextRepair(pages: dehyphenated)
+        return dehyphenated.map { collapseWhitespace(repair.deglued($0)) }
     }
 
     /// Lines appearing on more than half the pages are headers/footers.
