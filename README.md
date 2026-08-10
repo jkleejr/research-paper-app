@@ -40,6 +40,8 @@ Requires Xcode 26+, iOS 17+ deployment target, iPhone only.
 | Path | What's in it |
 |---|---|
 | `PaperReader/Services/` | Gemini client, PDF extraction, script generation, TTS prefetch + cache, playback |
+| `PaperReader/Services/TextRepair.swift` | Rebuilds word spacing in PDFs that extract without spaces |
+| `Tools/sample/` | Generates the bundled sample paper shipped in `Resources/SampleLibrary/` |
 | `PaperReader/Views/` | SwiftUI screens — library, reader, player, settings, key setup |
 | `PaperReader/Models/` | `Paper` and its pipeline status |
 | `docs/` | Support and privacy pages published via GitHub Pages |

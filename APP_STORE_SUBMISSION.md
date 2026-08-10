@@ -13,10 +13,21 @@ Working notes for the first public App Store release. Version **1.1 (4)**, bundl
   one.
 - **Build number** bumped to 4 (build 3 was already uploaded to TestFlight; App Store Connect
   rejects a reused build number).
-- **First-run key gate is no longer a hard wall.** It was a non-dismissible sheet, so anyone
-  without a key — including an App Review tester — saw an unusable app. It's now dismissible
-  ("Not Now"), with a persistent tappable banner on the library screen explaining what the key
-  is for.
+- **A bundled sample paper, playable with no key at all.** `SampleLibrary` installs it on first
+  launch: a real CC BY 4.0 paper, cleaned and narrated once by a developer (`Tools/sample/`) and
+  shipped as audio. Every chunk is pre-cached and plays from the app bundle, so it makes no API
+  calls, costs users nothing however many download it, and puts no key in the binary. This is
+  what lets a reviewer — or anyone — see the whole app work before getting a key.
+- **The first-run key gate is gone.** It used to be a non-dismissible sheet, so anyone without a
+  key saw an unusable app. The library now opens with the sample ready to play, and the key is
+  asked for at the moment it's first needed: tapping **+** to import your own PDF. Saving a key
+  there continues straight on to the file picker rather than dead-ending.
+- **`TextRepair` rebuilds words in PDFs that extract without spaces.** Some publishers justify
+  text by positioning glyphs instead of emitting spaces, so PDFKit returns whole lines run
+  together ("examinedbyeconomistswhogenerallydonot"); every PDFKit route returns the same string.
+  Segmentation against the document's own vocabulary took one such paper from 363 glued runs to
+  10. Ligature codepoints are folded to plain letters in the same pass (178 → 0), which is what
+  produced "network e ff ects" in the narration.
 - **Data disclosure in-app** — the key screen now states plainly that the key lives in the
   Keychain, that paper text is sent to Google, and links the privacy policy. Settings gained an
   About section (version, privacy policy, support) and a **Remove API Key** action, which is the
@@ -38,6 +49,20 @@ GitHub Pages serves `docs/` from the `main` branch at the URLs compiled into the
 - Support — `https://jkleejr.github.io/research-paper-app/`
 
 If you ever move them, update `AppConfig.privacyPolicyURL` / `supportURL` and rebuild.
+
+### Check it on a real device before submitting
+Nothing since build 3 has run on hardware, and the simulator can't tell you about audio
+sessions, background playback, lock screen controls, or how fast extraction really is.
+
+**Delete Paper Reader from the phone first** — that clears its Keychain entry too, so you get a
+genuine first launch. Then Xcode → your iPhone → Product → Run, and check:
+
+- The library opens with the **SAMPLE** paper and no key prompt; it plays.
+- Lock the phone: audio continues, lock screen shows title and controls.
+- Tap **+** → the key screen appears; saving a key continues to the file picker.
+- Import `mksc.2018.1095.pdf` (the paper whose text was broken) and read a few paragraphs: no
+  run-together words, no "e ff ects", headings on their own lines. Note how long
+  "Extracting text…" takes — ~7s for 24 pages on a Mac, so expect 15–30s on device.
 
 ### Revoke the old key — your move
 The `Secrets.xcconfig` that held it has been deleted, but the key itself
@@ -171,12 +196,16 @@ Xcode directly (Product → Archive) which is less fuss for signing.
 
 ## 6. Known review risks, in order of likelihood
 
-1. **Guideline 2.1 — reviewer can't exercise the app.** The single biggest one, and entirely
-   handled by putting a working key in the review notes. Without it, rejection is near certain.
-2. **Guideline 4.2 — minimum functionality.** An app gated behind a third-party API key that the
-   user must obtain and enable billing on is unusual. The description and support page are
-   written to make the value and the arrangement obvious up front. If rejected here, the fallback
-   is to make more of the app work without a key (e.g. reading the raw extracted PDF text).
+1. **Guideline 2.1 — reviewer can't exercise the app.** Was the biggest risk; the bundled sample
+   removes it. The reviewer opens the app and has a complete, working paper to play with no
+   setup and no credentials. The optional key in the review notes is a convenience for testing
+   the import path, not the thing standing between you and approval.
+2. **Guideline 4.2 — minimum functionality.** An app that needs a third-party API key with
+   billing enabled is unusual, and this is now the most likely rejection. It's substantially
+   blunted: the app does something genuinely useful on first launch without any account, and the
+   description says plainly what the key is for. What's left in reserve if Apple still raises it
+   is widening the no-key experience — bundling two or three samples, and letting an imported
+   paper be read with the iOS built-in speech synthesiser when no key is present.
 3. **Guideline 3.1.1 — in-app purchase.** Should not apply: the app sells nothing, and users pay
    Google directly for their own API usage rather than buying digital content in-app. If Apple
    raises it, the argument is that this is a bring-your-own-credentials app in the same shape as
