@@ -14,6 +14,11 @@ targets:
       - path: PaperReader
         excludes:
           - "Support/*.xcconfig"
+          - "Resources/SampleLibrary"
+      # Folder reference, so sample.json and audio/ keep their structure in the
+      # bundle instead of being flattened into the resource root.
+      - path: PaperReader/Resources/SampleLibrary
+        type: folder
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jklwjr.PaperReader

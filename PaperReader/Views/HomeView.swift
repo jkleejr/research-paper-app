@@ -8,16 +8,17 @@ struct HomeView: View {
     @State private var showingReader = false
     @State private var showingKeySetup = false
     @State private var importError: String?
-    /// Mirrors the Keychain so the banner reacts to the key being added or removed.
+    /// Mirrors the Keychain, so the import button knows whether to ask for a key.
     @State private var hasKey = AppConfig.geminiAPIKey != nil
+    /// Set when the key sheet was opened by tapping +, so saving a key continues
+    /// on to the file picker instead of dead-ending.
+    @State private var importAfterKeySetup = false
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                if !hasKey { keyBanner }
+            Group {
                 if store.papers.isEmpty {
                     emptyState
-                        .frame(maxHeight: .infinity)
                 } else {
                     paperList
                 }
@@ -33,7 +34,7 @@ struct HomeView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        showingImporter = true
+                        startImport()
                     } label: {
                         Image(systemName: "plus")
                     }
@@ -43,18 +44,21 @@ struct HomeView: View {
                 MiniPlayerView { showingReader = true }
             }
             .task {
-                // Offer the key screen once; after that the banner carries the
-                // prompt, so declining doesn't mean a sheet on every launch.
-                if !hasKey && !UserDefaults.standard.bool(forKey: "didOfferKeySetup") {
-                    UserDefaults.standard.set(true, forKey: "didOfferKeySetup")
-                    showingKeySetup = true
-                }
+                // No key gate on first launch — the bundled sample is playable
+                // straight away, and the key is asked for when it's first needed.
+                SampleLibrary.installIfNeeded(into: store)
                 store.resumeUnfinished()
             }
             .sheet(isPresented: $showingKeySetup) {
                 APIKeySetupView(cancelTitle: "Not Now")
             }
-            .onChange(of: showingKeySetup) { refreshKeyState() }
+            .onChange(of: showingKeySetup) { _, isShowing in
+                guard !isShowing else { return }
+                refreshKeyState()
+                // Saved a key on the way to importing — carry on to the picker.
+                if hasKey && importAfterKeySetup { showingImporter = true }
+                importAfterKeySetup = false
+            }
             .onChange(of: showingSettings) { refreshKeyState() }
             .fileImporter(isPresented: $showingImporter, allowedContentTypes: [.pdf]) { result in
                 switch result {
@@ -85,32 +89,16 @@ struct HomeView: View {
         hasKey = AppConfig.geminiAPIKey != nil
     }
 
-    /// Papers can be imported and read without a key, but nothing can be
-    /// cleaned up or narrated — say so up front instead of failing later.
-    private var keyBanner: some View {
-        Button {
+    /// Importing is the first thing that actually needs the API key, so that's
+    /// where it's asked for — not behind a gate on first launch.
+    private func startImport() {
+        refreshKeyState()
+        if hasKey {
+            showingImporter = true
+        } else {
+            importAfterKeySetup = true
             showingKeySetup = true
-        } label: {
-            HStack(spacing: 12) {
-                Image(systemName: "key.fill")
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Add your Gemini API key")
-                        .font(.subheadline.weight(.semibold))
-                    Text("Needed to turn papers into audio.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            .padding(12)
-            .background(.yellow.opacity(0.18), in: RoundedRectangle(cornerRadius: 12))
-            .padding(.horizontal)
-            .padding(.bottom, 8)
         }
-        .buttonStyle(.plain)
     }
 
     private var paperList: some View {

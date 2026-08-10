@@ -12,6 +12,14 @@ struct PaperCardView: View {
     var body: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
+                if SampleLibrary.isSample(paper.id) {
+                    Text("SAMPLE")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(.tint)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(.tint.opacity(0.15), in: Capsule())
+                }
                 Text(paper.title)
                     .font(.headline)
                     .lineLimit(2)

@@ -3,9 +3,18 @@ import Foundation
 /// Synthesized audio chunks on disk, one WAV per ChunkPlan.
 /// WAV (not raw PCM) so files are self-describing and AVAudioFile can read them.
 enum AudioCache {
-    static func url(paperID: UUID, chunkIndex: Int) -> URL {
+    /// Where synthesized audio is written for a chunk.
+    private static func cacheURL(paperID: UUID, chunkIndex: Int) -> URL {
         PaperStore.audioDirectoryURL(for: paperID)
             .appendingPathComponent(String(format: "chunk-%04d.wav", chunkIndex))
+    }
+
+    /// Readable location of a chunk's audio. The bundled sample paper plays
+    /// straight out of the app bundle, so it costs no extra storage.
+    static func url(paperID: UUID, chunkIndex: Int) -> URL {
+        let cached = cacheURL(paperID: paperID, chunkIndex: chunkIndex)
+        if FileManager.default.fileExists(atPath: cached.path) { return cached }
+        return SampleLibrary.bundledAudioURL(paperID: paperID, chunkIndex: chunkIndex) ?? cached
     }
 
     static func exists(paperID: UUID, chunkIndex: Int) -> Bool {
@@ -38,7 +47,7 @@ enum AudioCache {
         wav.appendLE(dataSize)
         wav.append(pcm16Data)
 
-        try wav.write(to: url(paperID: paperID, chunkIndex: chunkIndex), options: .atomic)
+        try wav.write(to: cacheURL(paperID: paperID, chunkIndex: chunkIndex), options: .atomic)
         return Double(pcm16Data.count / 2) / Double(sampleRate)
     }
 
