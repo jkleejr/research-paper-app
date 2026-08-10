@@ -12,3 +12,6 @@ xcuserdata/
 
 # macOS
 .DS_Store
+
+# Local secrets folder — never commit anything in here
+.secrets/
