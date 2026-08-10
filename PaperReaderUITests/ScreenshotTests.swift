@@ -22,23 +22,52 @@ final class ScreenshotTests: XCTestCase {
         XCTAssertTrue(library.waitForExistence(timeout: 10), "library never appeared")
         snap("01-library")
 
-        // Reader, paused at the saved position.
-        let paper = app.staticTexts["Attention Is All You Need"]
-        XCTAssertTrue(paper.waitForExistence(timeout: 5))
-        paper.tap()
+        // The bundled sample — real licensed content with real narration, and
+        // the one paper guaranteed to exist on a fresh install. Tap the card
+        // button itself; tapping its title label doesn't activate the row.
+        let card = app.buttons.matching(
+            NSPredicate(format: "label CONTAINS 'TradingAgents'")).firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 5), "sample paper missing from library")
+        card.tap()
+
+        // The sentence counter only exists in the reader, so it's the gate that
+        // proves we actually left the library.
+        let counter = app.staticTexts.matching(
+            NSPredicate(format: "label BEGINSWITH 'Sentence '")).firstMatch
+        XCTAssertTrue(counter.waitForExistence(timeout: 10),
+                      "reader didn't open\n\(app.debugDescription)")
+
         guard let play = waitForHittable("play.circle.fill") else {
             return XCTFail("reader controls never appeared\n\(app.debugDescription)")
+        }
+        // Seek past the attribution preamble so the shots show paper prose
+        // rather than the credit boilerplate.
+        let body = app.staticTexts.matching(
+            NSPredicate(format: "label BEGINSWITH 'Significant progress has been made'")).firstMatch
+        if body.waitForExistence(timeout: 3) {
+            body.tap()
+            Thread.sleep(forTimeInterval: 1.0)
         }
         snap("02-reader")
 
         // Playing: highlight advances and the control flips to pause.
+        let started = sentenceIndex()
         play.tap()
-        _ = waitForHittable("pause.circle.fill")
-        Thread.sleep(forTimeInterval: 2.5)
+        XCTAssertNotNil(waitForHittable("pause.circle.fill", timeout: 5),
+                        "playback never started — bundled audio may be unreadable")
+        Thread.sleep(forTimeInterval: 8)
         snap("03-reader-playing")
 
+        // Proves the audio really is playing out of the app bundle: the playhead
+        // has to have advanced on its own, with no API call possible.
+        let reached = sentenceIndex()
+        XCTAssertGreaterThan(reached, started,
+                             "playhead stuck at sentence \(started) — bundled audio not playing")
+        print("SAMPLE PLAYBACK OK — advanced \(started) -> \(reached) of 44")
+
         // Back to the library; the mini player now shows what's playing.
-        waitForHittable("xmark")?.tap()
+        // Highest xmark = the reader's close button, not the mini player's.
+        waitForHittable("xmark", lowest: false)?.tap()
         XCTAssertTrue(library.waitForExistence(timeout: 5))
         Thread.sleep(forTimeInterval: 1.0)
         snap("05-library-miniplayer")
@@ -77,22 +106,33 @@ final class ScreenshotTests: XCTestCase {
     }
 
     /// Screens stack (the reader covers the library), so the same SF Symbol can
-    /// match several times over. Take the bottom-most element that's actually
-    /// hittable — for this app's layouts that's the one on the visible screen.
+    /// match several times over — and a covered element can still report itself
+    /// hittable. Disambiguate by position: controls at the bottom of the screen
+    /// take the lowest match, the reader's close button the highest.
     @discardableResult
-    private func waitForHittable(_ identifier: String, timeout: TimeInterval = 10) -> XCUIElement? {
+    private func waitForHittable(_ identifier: String, timeout: TimeInterval = 10,
+                                 lowest: Bool = true) -> XCUIElement? {
         let deadline = Date().addingTimeInterval(timeout)
         repeat {
             let matches = app.buttons.matching(identifier: identifier)
             let hittable = (0..<matches.count)
                 .map { matches.element(boundBy: $0) }
                 .filter { $0.exists && $0.isHittable }
-            if let best = hittable.max(by: { $0.frame.maxY < $1.frame.maxY }) {
+            if let best = lowest ? hittable.max(by: { $0.frame.maxY < $1.frame.maxY })
+                                 : hittable.min(by: { $0.frame.maxY < $1.frame.maxY }) {
                 return best
             }
             Thread.sleep(forTimeInterval: 0.3)
         } while Date() < deadline
         return nil
+    }
+
+    /// Current position from the reader's "Sentence N of M" counter.
+    private func sentenceIndex() -> Int {
+        let label = app.staticTexts.matching(
+            NSPredicate(format: "label BEGINSWITH 'Sentence '")).firstMatch
+        guard label.exists, let n = label.label.split(separator: " ").dropFirst().first else { return 0 }
+        return Int(n) ?? 0
     }
 
     private func snap(_ name: String) {

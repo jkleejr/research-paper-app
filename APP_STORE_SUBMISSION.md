@@ -88,6 +88,7 @@ pipeline is repeatable — see `Tools/screenshots/README.md`. Raw unframed captu
 > Google's Gemini models to clean the extracted text into a coherent script first, then narrates
 > it — so you hear the paper, not the layout.
 >
+> • Try it straight away — a sample paper comes ready to play, no setup, no key
 > • Import any text-based PDF from Files or iCloud Drive
 > • Follow along with sentence-by-sentence highlighting, or listen with the screen off
 > • Background audio, lock screen controls, adjustable playback speed
@@ -97,8 +98,9 @@ pipeline is repeatable — see `Tools/screenshots/README.md`. Raw unframed captu
 >
 > BRING YOUR OWN API KEY
 >
-> Paper Reader has no subscription and no servers. You supply your own free Google Gemini API
-> key, and requests go straight from your phone to Google, billed to your own Google account.
+> Paper Reader has no subscription and no servers. The included sample paper plays immediately,
+> and to narrate your own papers you supply your own Google Gemini API key — requests go
+> straight from your phone to Google, billed to your own Google account.
 > Text cleanup runs on Gemini's free tier; narration uses Gemini's text-to-speech model, which
 > requires billing enabled on your Google account (roughly $1–3 of Google usage per full paper).
 > Get a key at aistudio.google.com/apikey.
@@ -123,20 +125,22 @@ skips the compliance questionnaire.
 
 > Paper Reader converts research paper PDFs into narrated audio using Google's Gemini API.
 >
-> The app requires the user's own Gemini API key — there is no subscription or developer-run
-> server, and all API usage is billed to the user's own Google account. To review full
-> functionality, please use this key:
+> NO ACCOUNT OR CREDENTIALS ARE NEEDED TO REVIEW THIS APP. It ships with a sample paper that is
+> already cleaned and narrated, installed into the library on first launch. Open the app, tap
+> the paper badged SAMPLE ("TradingAgents: Multi-Agents LLM Financial Trading Framework") and
+> press play. That demonstrates the complete reading experience: synchronized sentence
+> highlighting, adjustable speed, background audio, and lock screen controls.
 >
->     <PASTE A WORKING KEY WITH BILLING ENABLED HERE>
+> To narrate their OWN PDFs, users supply their own Google Gemini API key, stored in the iOS
+> Keychain. There is no subscription and no developer-run server — requests go directly from the
+> device to Google, billed to the user's own Google account. Tapping + prompts for the key.
 >
-> Enter it on the first-launch screen, or via Settings → Add API Key.
+> If you would also like to test importing a PDF, you are welcome to use this key:
 >
-> To test: tap +, choose any text-based PDF (a sample paper is attached / available at
-> arxiv.org), wait for processing, then tap the paper to open the player. Processing a full
-> paper takes a few minutes; a short PDF is faster.
+>     <OPTIONAL: A WORKING KEY WITH BILLING ENABLED>
 >
-> The app can be browsed without a key — the library and settings are fully accessible — but
-> importing and narrating papers requires one.
+> Add it via Settings → Add API Key, then tap +, choose any text-based PDF, and wait for
+> processing (a few minutes for a full paper; a short PDF is faster).
 >
 > Privacy: the app has no backend and no analytics. PDFs, extracted text, generated audio, and
 > playback progress are stored only on device; the API key is stored in the iOS Keychain. Text
@@ -144,12 +148,14 @@ skips the compliance questionnaire.
 > user's own key. Nothing is collected by the developer, which is why the privacy label is
 > "Data Not Collected."
 >
-> The app does not perform OCR, so image-only scanned PDFs are not supported.
+> The bundled sample is used under the Creative Commons Attribution 4.0 licence, credited at the
+> start of its audio. The app does not perform OCR, so image-only scanned PDFs are not supported.
 
-**Generate a dedicated review key** in a Google Cloud project with billing enabled and a low
-budget cap, use it only for this, and revoke it after approval. Review may take a few days and
-will consume a few dollars of TTS. Attach a short sample PDF in the review attachment field so
-the reviewer doesn't have to find one.
+The bundled sample is what removes the Guideline 2.1 risk: the reviewer gets a fully working app
+with no setup. Including a key anyway is still worth it — it costs nothing if unused, and it
+lets a thorough reviewer exercise the import path rather than guessing at it. Make it a
+dedicated key in its own Google project with billing enabled and a low budget cap, so revoking
+it later affects nothing you use.
 
 ## 5. Ship it
 

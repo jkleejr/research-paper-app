@@ -21,7 +21,7 @@ FONT = "/System/Library/Fonts/SFNS.ttf"
 
 FRAMES = [
     ("01-library", "Turn research papers\ninto audio",
-     "Import a PDF and listen anywhere."),
+     "Import a PDF, or start with the\nincluded sample."),
     ("03-reader-playing", "Follow along,\nsentence by sentence",
      "Headers, page numbers and citation clutter\nare cleaned out first."),
     ("08-voices", "Eight narration voices",
