@@ -32,7 +32,7 @@ targets:
       path: PaperReader/Support/Info.plist
       properties:
         CFBundleDisplayName: Paper Reader
-        CFBundleShortVersionString: "1.1"
+        CFBundleShortVersionString: "1.0"
         CFBundleVersion: "4"
         # HTTPS-only networking -> exempt from export compliance docs; skips
         # the manual compliance question on every TestFlight upload.

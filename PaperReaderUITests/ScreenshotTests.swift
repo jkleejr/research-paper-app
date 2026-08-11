@@ -28,14 +28,17 @@ final class ScreenshotTests: XCTestCase {
         let card = app.buttons.matching(
             NSPredicate(format: "label CONTAINS 'TradingAgents'")).firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 5), "sample paper missing from library")
-        card.tap()
 
-        // The sentence counter only exists in the reader, so it's the gate that
-        // proves we actually left the library.
-        let counter = app.staticTexts.matching(
-            NSPredicate(format: "label BEGINSWITH 'Sentence '")).firstMatch
-        XCTAssertTrue(counter.waitForExistence(timeout: 10),
-                      "reader didn't open\n\(app.debugDescription)")
+        // The reader's close button only exists once the cover is up, so it's
+        // the gate that proves we left the library — unlike the sentence
+        // counter, which the mini player shows too. Retry: a tap on a list row
+        // occasionally doesn't register while the list is still settling.
+        var opened = false
+        for _ in 0..<4 where !opened {
+            card.tap()
+            opened = waitForHittable("xmark", timeout: 4, lowest: false) != nil
+        }
+        XCTAssertTrue(opened, "reader didn't open\n\(app.debugDescription)")
 
         guard let play = waitForHittable("play.circle.fill") else {
             return XCTFail("reader controls never appeared\n\(app.debugDescription)")

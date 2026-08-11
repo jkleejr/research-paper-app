@@ -1,6 +1,6 @@
 # App Store submission — Paper Reader
 
-Working notes for the first public App Store release. Version **1.1 (4)**, bundle ID
+Working notes for the first public App Store release. Version **1.0 (4)**, bundle ID
 `com.jklwjr.PaperReader`, team `42WF5JQ74Y`, iPhone only.
 
 ---
@@ -11,8 +11,11 @@ Working notes for the first public App Store release. Version **1.1 (4)**, bundl
   no collected data, and the required reason for `UserDefaults` (`CA92.1`). Verified to land
   in Copy Bundle Resources. Apple rejects submissions that touch required-reason APIs without
   one.
-- **Build number** bumped to 4 (build 3 was already uploaded to TestFlight; App Store Connect
-  rejects a reused build number).
+- **Version 1.0, build 4.** 1.0 matches the version record already waiting in App Store Connect
+  — a build only appears under a record whose number matches its `CFBundleShortVersionString`,
+  so these have to agree. Build 4 because 3 went to TestFlight and a build number can't be
+  reused. If you upload and then need any change, bump `CFBundleVersion` and re-run
+  `xcodegen generate`.
 - **A bundled sample paper, playable with no key at all.** `SampleLibrary` installs it on first
   launch: a real CC BY 4.0 paper, cleaned and narrated once by a developer (`Tools/sample/`) and
   shipped as audio. Every chunk is pre-cached and plays from the app bundle, so it makes no API
