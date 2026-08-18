@@ -112,9 +112,9 @@ pipeline is repeatable — see `Tools/screenshots/README.md`. Raw unframed captu
 **Keywords** (100 char limit):
 `research,paper,pdf,tts,text to speech,listen,audio,academic,study,narrate,science,reader`
 
-**Promotional text**:
-> Turn any research paper into clean, listenable audio. Import a PDF, and Paper Reader strips
-> the page furniture and citation clutter, then narrates what's left.
+**Promotional text** (167 / 170 characters — the only field editable on a live app):
+> Turn any research paper into clean, listenable audio. Import a PDF and Paper Reader strips
+> out the headers, page numbers, and citation clutter, then narrates the rest.
 
 **Description**:
 > Paper Reader turns research paper PDFs into audio you can actually listen to.
