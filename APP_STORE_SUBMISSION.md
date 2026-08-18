@@ -3,6 +3,19 @@
 Working notes for the first public App Store release. Version **1.0 (4)**, bundle ID
 `com.jklwjr.PaperReader`, team `42WF5JQ74Y`, iPhone only.
 
+> **Submitted for review 2026-08-17** — 1.0 (4), awaiting Apple. What went in, where it
+> differs from the plan below: App Store name kept as **"Paper Reader App"**; category
+> **Productivity** primary, **Education** secondary (the reverse of the recommendation);
+> screenshots uploaded at **6.5" (1242×2688)**, the only iPhone size this record offers;
+> DSA trader status declared **non-trader**; Content Rights answered yes-with-rights, on the
+> strength of the CC BY 4.0 sample; privacy label **Data Not Collected**, published; age
+> rating 4+; review notes pasted **without** a demo key.
+>
+> Still outstanding: revoke the old Gemini key (below), and run 1.0 (4) on a real iPhone —
+> it is on TestFlight now, so installing from there tests the exact submitted binary. If that
+> turns up a problem, the version can be pulled with **Remove from Review**, fixed, and
+> resubmitted as build 5.
+
 ---
 
 ## 1. Done in the codebase
