@@ -11,7 +11,7 @@ Working notes for the first public App Store release. Version **1.0 (4)**, bundl
 > strength of the CC BY 4.0 sample; privacy label **Data Not Collected**, published; age
 > rating 4+; review notes pasted **without** a demo key.
 >
-> Still outstanding: revoke the old Gemini key (below), and run 1.0 (4) on a real iPhone —
+> Still outstanding: run 1.0 (4) on a real iPhone —
 > it is on TestFlight now, so installing from there tests the exact submitted binary. If that
 > turns up a problem, the version can be pulled with **Remove from Review**, fixed, and
 > resubmitted as build 5.
@@ -82,11 +82,11 @@ Settings → **Remove API Key** if you want to see the no-key path a new user ge
   run-together words, no "e ff ects", headings on their own lines. Note how long
   "Extracting text…" takes — ~7s for 24 pages on a Mac, so expect 15–30s on device.
 
-### Revoke the old key — your move
-The `Secrets.xcconfig` that held it has been deleted, but the key itself
-(`AQ.Ab8RN6Jf…`) is still live until you revoke it at
-[aistudio.google.com/apikey](https://aistudio.google.com/apikey). It was never committed and
-hasn't been read by any build since the move to per-user keys, but revoke it anyway.
+### Revoke the old key — done 2026-08-17
+The key from the embedded-key era (`AQ.Ab8RN6Jf…`) was revoked at
+[aistudio.google.com/apikey](https://aistudio.google.com/apikey). Its `Secrets.xcconfig` was
+already deleted, no build had read it since the move to per-user keys, and git history is
+clean of it — so nothing in the app depended on it. Shipping builds carry no key at all.
 
 ### Screenshots — done
 Four 1320×2868 (6.9") images are in `screenshots/appstore/`, ready to upload in filename order:
