@@ -116,36 +116,53 @@ pipeline is repeatable — see `Tools/screenshots/README.md`. Raw unframed captu
 > Turn any research paper into clean, listenable audio. Import a PDF and Paper Reader strips
 > out the headers, page numbers, and citation clutter, then narrates the rest.
 
-**Description**:
-> Paper Reader turns research paper PDFs into audio you can actually listen to.
+**Description** (as edited by John, 2026-08-17):
+> Paper Reader turns research paper PDFs into audio you can actually listen to:
 >
-> PDFs of academic papers are hostile to text-to-speech: headers, footers, page numbers, inline
-> citations, figure captions, and table fragments all get read aloud as noise. Paper Reader uses
-> Google's Gemini models to clean the extracted text into a coherent script first, then narrates
-> it — so you hear the paper, not the layout.
+> - PDFs of academic papers are hostile to text-to-speech: headers, footers, page numbers,
+>   inline citations, figure captions, and table fragments all get read aloud as noise.
+>   Paper Reader uses Google's Gemini models to clean the extracted text into a coherent
+>   script first, then narrates it — so you hear the paper, not the layout.
+> - Try it straight away — a sample paper comes ready to play, no setup, no key
 >
-> • Try it straight away — a sample paper comes ready to play, no setup, no key
-> • Import any text-based PDF from Files or iCloud Drive
-> • Follow along with sentence-by-sentence highlighting, or listen with the screen off
-> • Background audio, lock screen controls, adjustable playback speed
-> • Eight narration voices to choose from
-> • Papers, audio, and progress are saved on device, so you can pick up where you left off
-> • Processing resumes where it stopped if you close the app mid-paper
+> Import any text-based PDF from Files or iCloud Drive:
 >
-> BRING YOUR OWN API KEY
+> - Follow along with sentence-by-sentence highlighting, or listen with the screen off
+> - Background audio, lock screen controls, adjustable playback speed
+> - 8 narration voices to choose from
+> - Papers, audio, and progress are saved on device, so you can pick up where you left off
+> - Processing resumes where it stopped if you close the app mid-paper
 >
-> Paper Reader has no subscription and no servers. The included sample paper plays immediately,
-> and to narrate your own papers you supply your own Google Gemini API key — requests go
-> straight from your phone to Google, billed to your own Google account.
-> Text cleanup runs on Gemini's free tier; narration uses Gemini's text-to-speech model, which
-> requires billing enabled on your Google account (roughly $1–3 of Google usage per full paper).
-> Get a key at aistudio.google.com/apikey.
+> BRING YOUR OWN API KEY:
 >
+> - Paper Reader has no subscription and no servers. The included sample paper plays
+>   immediately, and to narrate your own papers you supply your own Google Gemini API key —
+>   requests go straight from your phone to Google, billed to your own Google account.
+> - Narration uses Gemini's text-to-speech model, which requires billing enabled on your
+>   Google account. A typical paper costs $1–2 of Google usage; a long one can reach $3.
+>   Text cleanup adds a few cents.
+> - Get a key at aistudio.google.com/apikey.
+>
+> NOTE:
 > Your key is stored in the iOS Keychain. Papers and audio never leave your device except as
 > text sent to Google to be processed. Nothing is collected by the developer.
->
-> Note: Paper Reader reads embedded PDF text and does not perform OCR, so image-only scans
-> won't work.
+> Paper Reader reads embedded PDF text and does not perform OCR, so image-only scans won't work.
+
+The three bullets that split one sentence in the draft are joined back into a single bullet —
+the App Store renders the description as plain text, so a sentence broken across bullets reads
+as three fragments. Two cost claims were also corrected against measured pricing; see below.
+
+**Why the cost line differs from the draft.** The draft said "Text cleanup runs on Gemini's
+free tier" and "roughly $1 per paper, or ~$1.75 per 50k characters". Both were changed:
+
+- *Free tier.* Enabling billing — which TTS requires — moves the whole project to a paid tier,
+  so cleanup is billed too. It is only a few cents, so the line now says that instead.
+- *$1 per paper.* Verified against `gemini-3.1-flash-tts-preview` pricing ($20 per 1M audio
+  output tokens, 25 tokens/second = $0.03/minute of audio) and the bundled sample's measured
+  rate of 856 characters per minute: a 35k-character paper runs ~41 minutes and ~$1.25, a
+  50k-character one ~$1.75, a long 70k-character one ~$2.45. Quoting "$1" would understate the
+  common case, and a bill that lands above the promise is what one-star reviews are made of.
+  "50k characters" was dropped as well — nobody knows their paper's character count.
 
 ### App Privacy ("nutrition label")
 Answer **Data Not Collected**. The app has no backend, no analytics, and no SDKs; text sent to
