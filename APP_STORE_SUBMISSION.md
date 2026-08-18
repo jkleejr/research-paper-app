@@ -116,13 +116,13 @@ pipeline is repeatable — see `Tools/screenshots/README.md`. Raw unframed captu
 > Turn any research paper into clean, listenable audio. Import a PDF, and Paper Reader
 > filters out the headers, page numbers, and citation clutter, then narrates the text.
 
-**Description** (as edited by John, 2026-08-17):
-> Paper Reader turns research paper PDFs into audio you can actually listen to:
->
-> - PDFs of academic papers are hostile to text-to-speech: headers, footers, page numbers,
->   inline citations, figure captions, and table fragments all get read aloud as noise.
->   Paper Reader uses Google's Gemini models to clean the extracted text into a coherent
->   script first, then narrates it — so you hear the paper, not the layout.
+**Description** (1,680 / 4,000 characters — paste from `description.txt`, not from here; the
+lines below are wrapped for reading and would paste as hard breaks mid-sentence):
+> Paper Reader turns research paper PDFs into audio you can actually listen to.
+> PDFs of academic papers are hostile to text-to-speech: headers, footers, page numbers,
+> inline citations, figure captions, and table fragments all get read aloud as noise.
+> Paper Reader uses Google's Gemini models to clean the extracted text into a coherent
+> script first, then narrates it so you hear the paper, not the layout.
 > - Try it straight away — a sample paper comes ready to play, no setup, no key
 >
 > Import any text-based PDF from Files or iCloud Drive:
