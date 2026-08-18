@@ -419,6 +419,7 @@
 				DEVELOPMENT_TEAM = 42WF5JQ74Y;
 				INFOPLIST_FILE = PaperReader/Support/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Paper Reader";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -522,6 +523,7 @@
 				DEVELOPMENT_TEAM = 42WF5JQ74Y;
 				INFOPLIST_FILE = PaperReader/Support/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Paper Reader";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

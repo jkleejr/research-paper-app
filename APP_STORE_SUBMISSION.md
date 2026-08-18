@@ -76,15 +76,21 @@ The `Secrets.xcconfig` that held it has been deleted, but the key itself
 hasn't been read by any build since the move to per-user keys, but revoke it anyway.
 
 ### Screenshots — done
-Five 1320×2868 (6.9") images are in `screenshots/appstore/`, ready to upload in filename order:
+Four 1320×2868 (6.9") images are in `screenshots/appstore/`, ready to upload in filename order:
 
 | # | Screen | Caption |
 |---|---|---|
-| 01 | Library | Turn research papers into audio |
+| 01 | Library + mini player | Turn research papers into audio |
 | 02 | Reader, playing | Follow along, sentence by sentence |
 | 03 | Voice picker | Eight narration voices |
-| 04 | Library + mini player | Pick up exactly where you left off |
-| 05 | API key screen | Bring your own API key |
+| 04 | API key screen | Bring your own API key |
+
+(The plain library shot and the mini-player shot were near-duplicates, so they were
+merged: the mini-player capture carries the opening caption.)
+
+Drop them in the **6.9" box**, not 6.5" — each box accepts only its own dimensions, and
+6.9" is the only one required. A 6.5" set (1242×2688) is also generated, in
+`screenshots/appstore-6.5/`, if you want to fill that box too.
 
 6.9" is the only size App Store Connect requires, since the app is iPhone-only. The whole
 pipeline is repeatable — see `Tools/screenshots/README.md`. Raw unframed captures are in

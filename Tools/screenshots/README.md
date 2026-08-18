@@ -3,8 +3,16 @@
 Regenerates the App Store screenshots in `screenshots/` end to end. Everything is
 repeatable, so a redesign just means running these three steps again.
 
-Output is 1320×2868 — the 6.9" size App Store Connect requires, and the only iPhone
-size needed since the app is iPhone-only.
+Output is both iPhone sizes App Store Connect offers, from the same raw captures:
+
+| Size | Pixels | Folder | Needed? |
+|---|---|---|---|
+| 6.9" | 1320×2868 | `screenshots/appstore/` | Required |
+| 6.5" | 1242×2688 | `screenshots/appstore-6.5/` | Optional |
+
+Each upload box accepts only its own dimensions, so a 6.9" file dropped into the 6.5"
+box is rejected with "the dimensions of one or more screenshots are wrong". Filling
+6.9" alone is enough — Apple scales it down for other devices.
 
 ## 1. Stage a sample library
 
@@ -65,11 +73,12 @@ PY
 ## 3. Compose
 
 `compose.py` lays each capture on the caption background and writes the uploadable
-files to `screenshots/appstore/`. Edit the `FRAMES` list to change which captures are
-used, their order, and their captions.
+files. Edit the `FRAMES` list to change which captures are used, their order, and
+their captions; `SIZES` controls which output sizes are written. The layout is
+authored at 6.9" and scaled from there.
 
 ```sh
 python3 Tools/screenshots/compose.py     # needs Pillow
 ```
 
-Upload `screenshots/appstore/*.png` in filename order.
+Upload `screenshots/appstore/*.png` in filename order, into the **6.9" box**.
