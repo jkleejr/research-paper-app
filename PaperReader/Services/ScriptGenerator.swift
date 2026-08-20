@@ -6,10 +6,12 @@ struct ScriptGenerator {
 
     /// Split page texts into LLM-sized input chunks, breaking at paragraph boundaries.
     static func inputChunks(from pages: [String], maxChars: Int = 10_000) -> [String] {
-        let paragraphs = pages
-            .flatMap { $0.components(separatedBy: "\n\n") }
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
+        let paragraphs = joinSentencesSplitByPageBreaks(
+            pages
+                .flatMap { $0.components(separatedBy: "\n\n") }
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+        )
 
         var chunks: [String] = []
         var current = ""
@@ -38,6 +40,36 @@ struct ScriptGenerator {
         }
         if !current.isEmpty { chunks.append(current) }
         return chunks
+    }
+
+    /// A sentence running across a page break arrives as the tail of one page and
+    /// the head of the next — two separate paragraphs. Joining them with a blank
+    /// line would tell the model they're unrelated, and worse, the seam can land
+    /// on a chunk boundary, where no single call can see both halves to repair.
+    private static func joinSentencesSplitByPageBreaks(_ paragraphs: [String]) -> [String] {
+        var joined: [String] = []
+        for paragraph in paragraphs {
+            guard let previous = joined.last,
+                  !endsSentence(previous),
+                  paragraph.first?.isLowercase == true else {
+                joined.append(paragraph)
+                continue
+            }
+            joined[joined.count - 1] = previous + " " + paragraph
+        }
+        return joined
+    }
+
+    /// True when the text ends the way a finished sentence does. Headings, which
+    /// end without punctuation, are followed by a capital and so never merge.
+    private static func endsSentence(_ text: String) -> Bool {
+        guard let last = text.last else { return true }
+        if ".!?".contains(last) { return true }
+        // A closing quote or bracket still ends the sentence it wraps.
+        if "\"'’”)]".contains(last) {
+            return text.dropLast().last.map { ".!?".contains($0) } ?? false
+        }
+        return false
     }
 
     private static let systemInstruction = """

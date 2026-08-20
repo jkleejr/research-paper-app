@@ -60,7 +60,33 @@ enum PDFTextExtractor {
         // Built once across the whole document, so a word spaced correctly on
         // one page repairs the pages where it isn't.
         let repair = TextRepair(pages: dehyphenated)
-        return dehyphenated.map { collapseWhitespace(repair.deglued($0)) }
+        let cleaned = dehyphenated.map { collapseWhitespace(repair.deglued($0)) }
+        return joinHyphenatedPageBreaks(cleaned)
+    }
+
+    /// Same repair as `joinHyphenatedLineBreaks`, for the break it can't see: a
+    /// word hyphenated across a *page* boundary ("interpreta-" / "tion") has its
+    /// halves in two different strings, with no newline between them to match.
+    /// Left alone it reaches the reader as two sentences.
+    private static func joinHyphenatedPageBreaks(_ pages: [String]) -> [String] {
+        var pages = pages
+        for index in pages.indices.dropLast() {
+            let page = pages[index]
+            // A hyphen ending the page, with a letter before it.
+            guard page.hasSuffix("-"), page.dropLast().last?.isLetter == true else { continue }
+            // Continuations are lowercase; an uppercase start is a new sentence
+            // after a genuine dash, not the tail of a split word.
+            let next = pages[index + 1]
+            guard next.first?.isLowercase == true else { continue }
+            let wordEnd = next.firstIndex { !$0.isLetter } ?? next.endIndex
+            let word = String(next[..<wordEnd])
+            guard !word.isEmpty else { continue }
+
+            pages[index] = String(page.dropLast()) + word
+            pages[index + 1] = String(next[wordEnd...])
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return pages
     }
 
     /// Lines appearing on more than half the pages are headers/footers.
