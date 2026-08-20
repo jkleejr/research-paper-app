@@ -1,29 +1,84 @@
 import SwiftUI
 
-/// Temporary pipeline-debug view: shows the cleaned script (sentence-segmented)
-/// for ready papers, or the raw extracted text otherwise.
-/// Replaced by ReaderView once playback exists.
+/// What a paper that isn't playable yet opens into: the failure and what to do
+/// about it if processing failed, otherwise the cleaned script or the raw
+/// extracted text so there's something to look at while the pipeline runs.
 struct RawTextView: View {
     @Environment(PaperStore.self) private var store
+    @Environment(\.dismiss) private var dismiss
     let paperID: UUID
 
     private var paper: Paper? { store.paper(id: paperID) }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 16) {
-                if let paper {
-                    if paper.status == .ready {
-                        scriptView(paper)
-                    } else {
-                        rawView(paper)
-                    }
+        Group {
+            if let paper {
+                switch paper.status {
+                case .failed(let message):
+                    // The text is beside the point once processing failed — the
+                    // reason is what the tap was for.
+                    failureView(message)
+                case .ready:
+                    textScroll { scriptView(paper) }
+                default:
+                    textScroll { rawView(paper) }
                 }
             }
-            .padding()
         }
         .navigationTitle(paper?.title ?? "")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func textScroll<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 16) {
+                content()
+            }
+            .padding()
+        }
+    }
+
+    private func failureView(_ message: String) -> some View {
+        ContentUnavailableView {
+            Label("Couldn't Process This Paper", systemImage: "exclamationmark.triangle")
+        } description: {
+            VStack(spacing: 12) {
+                Text(message)
+                    .textSelection(.enabled)
+                if let hint = hint(for: message) {
+                    Text(hint)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.top, 4)
+        } actions: {
+            Button("Try Again") {
+                store.retry(paperID)
+                // Back to the library, where the row shows processing progress.
+                dismiss()
+            }
+            .buttonStyle(.borderedProminent)
+        }
+    }
+
+    /// Plain-language next step for the failures a user can actually act on.
+    private func hint(for message: String) -> String? {
+        let text = message.lowercased()
+        if text.contains("api key") || text.contains("401") || text.contains("403")
+            || text.contains("permission") {
+            return "Check your API key in Settings."
+        }
+        if text.contains("429") || text.contains("quota") || text.contains("rate limit") {
+            return "Gemini is rate-limiting your key. Wait a minute, then try again."
+        }
+        if text.contains("billing") {
+            return "Narration needs billing enabled on your Google account."
+        }
+        if text.contains("no text") || text.contains("ocr") {
+            return "Paper Reader reads embedded PDF text, so image-only scans won't work."
+        }
+        return nil
     }
 
     @ViewBuilder
