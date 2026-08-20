@@ -95,11 +95,14 @@ actor GeminiClient {
                       systemInstruction: String? = nil,
                       prompt: String,
                       responseMimeType: String? = nil) async throws -> String {
-        // Text calls are mechanical (cleanup, title extraction) — minimal
-        // thinking avoids paying for reasoning tokens and the no-content
-        // responses runaway reasoning can produce.
+        // Text calls are mechanical (cleanup, title extraction) — the lowest
+        // thinking level avoids paying for reasoning tokens and the no-content
+        // responses runaway reasoning can produce. "minimal" was rejected once
+        // `gemini-flash-latest` rolled forward; "low" is the floor newer Flash
+        // models accept, and `generate` drops the level entirely if even that
+        // stops being valid.
         let config = GenerationConfig(responseMimeType: responseMimeType,
-                                      thinkingConfig: .init(thinkingLevel: "minimal"))
+                                      thinkingConfig: .init(thinkingLevel: "low"))
         let parts = try await generate(model: model, systemInstruction: systemInstruction,
                                        prompt: prompt, generationConfig: config)
         let text = parts.compactMap(\.text).joined()
@@ -130,11 +133,45 @@ actor GeminiClient {
 
     // MARK: - Core request with retry
 
+    /// Models that have rejected our thinking level this launch. `textModel` is a
+    /// rolling alias, so the model behind it can change to one that no longer
+    /// accepts the level we send; remembering the rejection keeps every later
+    /// chunk of the same paper from paying for the same doomed request.
+    private var thinkingLevelRejected: Set<String> = []
+
+    /// Sends the request, and if the model rejects the thinking level, sends it
+    /// once more without one. Losing the level costs reasoning tokens; failing
+    /// costs the whole import.
     private func generate(model: String,
                           systemInstruction: String?,
                           prompt: String,
                           generationConfig: GenerationConfig?,
                           apiKeyOverride: String? = nil) async throws -> [Part] {
+        var config = generationConfig
+        if config?.thinkingConfig != nil, thinkingLevelRejected.contains(model) {
+            config?.thinkingConfig = nil
+        }
+
+        do {
+            return try await send(model: model, systemInstruction: systemInstruction,
+                                  prompt: prompt, generationConfig: config,
+                                  apiKeyOverride: apiKeyOverride)
+        } catch GeminiError.http(let status, let message)
+                    where status == 400 && config?.thinkingConfig != nil
+                        && message.localizedCaseInsensitiveContains("thinking") {
+            thinkingLevelRejected.insert(model)
+            config?.thinkingConfig = nil
+            return try await send(model: model, systemInstruction: systemInstruction,
+                                  prompt: prompt, generationConfig: config,
+                                  apiKeyOverride: apiKeyOverride)
+        }
+    }
+
+    private func send(model: String,
+                      systemInstruction: String?,
+                      prompt: String,
+                      generationConfig: GenerationConfig?,
+                      apiKeyOverride: String? = nil) async throws -> [Part] {
         guard let apiKey = apiKeyOverride ?? AppConfig.geminiAPIKey else { throw GeminiError.missingAPIKey }
 
         var urlRequest = URLRequest(url: URL(string: "\(AppConfig.apiBase)/models/\(model):generateContent")!)
