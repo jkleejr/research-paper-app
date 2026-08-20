@@ -176,19 +176,25 @@ final class PaperStore {
         }
 
         do {
-            // Improve on the filename title once per paper.
-            if paper.title == paper.originalFilename, let firstPage = pages.first {
-                if let title = try? await generator.extractTitle(fromFirstPage: firstPage) {
+            // Title and kind together, once per document. The kind picks the
+            // cleanup rules, so it has to be settled before the first chunk.
+            if paper.kind == nil || paper.title == paper.originalFilename {
+                let identified = try? await generator.identify(pages: pages)
+                if paper.title == paper.originalFilename, let title = identified?.title {
                     paper.title = title
                 }
+                paper.kind = identified?.kind ?? DocumentKind.heuristic(from: pages)
+                save(paper)
             }
+            let kind = paper.kind ?? .prose
 
             for (i, chunk) in inputChunks.enumerated() where cleaned[i] == nil {
                 paper.status = .generatingScript(done: i, total: inputChunks.count)
                 paper.cleanedChunks = cleaned
                 save(paper)
 
-                cleaned[i] = try await generator.cleanChunk(chunk, index: i, total: inputChunks.count)
+                cleaned[i] = try await generator.cleanChunk(chunk, index: i,
+                                                            total: inputChunks.count, kind: kind)
             }
 
             let script = cleaned.compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: "\n\n")

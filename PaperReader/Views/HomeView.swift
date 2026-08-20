@@ -147,7 +147,7 @@ struct HomeView: View {
         ContentUnavailableView {
             Label("No Papers Yet", systemImage: "doc.text")
         } description: {
-            Text("Tap + to add a research paper PDF from your files.")
+            Text("Tap + to add a PDF from your files — a paper, a slide deck, an article.")
         } actions: {
             Button("Add a Paper") { showingImporter = true }
                 .buttonStyle(.borderedProminent)

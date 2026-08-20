@@ -61,7 +61,9 @@ print("cleaning \(inputs.count) chunk(s) with \(AppConfig.textModel)…")
 
 var cleanedParts: [String] = []
 for (i, chunk) in inputs.enumerated() {
-    let cleaned = try await generator.cleanChunk(chunk, index: i, total: inputs.count)
+    // The bundled sample is a paper; the tool doesn't need kind detection.
+    let cleaned = try await generator.cleanChunk(chunk, index: i, total: inputs.count,
+                                                 kind: .researchPaper)
     if !cleaned.isEmpty { cleanedParts.append(cleaned) }
     print("  chunk \(i + 1)/\(inputs.count): \(cleaned.count) chars")
 }
