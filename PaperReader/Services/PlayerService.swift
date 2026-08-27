@@ -22,9 +22,9 @@ final class PlayerService {
     private(set) var playbackError: String?
 
     /// What the narration speed is allowed to be, whether picked from the menu
-    /// or typed in. Past 2× the voice is hard to follow, and below 0.5× the
-    /// time-pitch unit starts to smear it.
-    static let rateRange: ClosedRange<Float> = 0.5...2.0
+    /// or typed in. Past 2× the voice is hard to follow, and slower than 0.75×
+    /// it drags without being any easier to follow.
+    static let rateRange: ClosedRange<Float> = 0.75...2.0
 
     /// Any speed in `rateRange`, not just the menu's presets. Values outside it
     /// are clamped rather than refused, so a typed 3 lands on 2×.
