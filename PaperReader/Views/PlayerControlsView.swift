@@ -5,8 +5,10 @@ struct PlayerControlsView: View {
 
     @State private var isScrubbing = false
     @State private var scrubPosition: Double = 0
+    @State private var isTypingSpeed = false
+    @State private var typedSpeed = ""
 
-    private static let speeds: [Float] = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
+    private static let speeds: [Float] = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]
 
     var body: some View {
         VStack(spacing: 10) {
@@ -35,6 +37,15 @@ struct PlayerControlsView: View {
         .padding(.top, 14)
         .padding(.bottom, 16)
         .glassCard(in: RoundedRectangle(cornerRadius: 28))
+        .alert("Narration Speed", isPresented: $isTypingSpeed) {
+            TextField("1.0", text: $typedSpeed)
+                .keyboardType(.decimalPad)
+            Button("Cancel", role: .cancel) {}
+            Button("Set") { applyTypedSpeed() }
+        } message: {
+            Text("Enter any speed from \(label(for: PlayerService.rateRange.lowerBound))"
+                 + " to \(label(for: PlayerService.rateRange.upperBound)).")
+        }
     }
 
     @ViewBuilder
@@ -129,7 +140,7 @@ struct PlayerControlsView: View {
 
     private var speedMenu: some View {
         Menu {
-            ForEach(Self.speeds, id: \.self) { speed in
+            ForEach(menuSpeeds, id: \.self) { speed in
                 Button {
                     player.playbackRate = speed
                 } label: {
@@ -140,6 +151,11 @@ struct PlayerControlsView: View {
                     }
                 }
             }
+            Divider()
+            Button("Custom Speed…") {
+                typedSpeed = Self.speedText(for: player.playbackRate)
+                isTypingSpeed = true
+            }
         } label: {
             Text(label(for: player.playbackRate))
                 .font(.subheadline.weight(.semibold))
@@ -147,8 +163,31 @@ struct PlayerControlsView: View {
         }
     }
 
+    /// The presets, plus a typed speed of the user's own so it still shows up
+    /// ticked in the list rather than vanishing from it.
+    private var menuSpeeds: [Float] {
+        let current = player.playbackRate
+        guard !Self.speeds.contains(current) else { return Self.speeds }
+        return (Self.speeds + [current]).sorted()
+    }
+
+    private func applyTypedSpeed() {
+        // A decimal pad hands back the locale's separator, which Float(_:) only
+        // reads as a point.
+        let typed = typedSpeed.replacingOccurrences(of: ",", with: ".")
+        guard let value = Float(typed), value > 0 else { return }
+        // Two decimals: finer than that is below what anyone can hear, and it
+        // keeps the button's label short.
+        player.playbackRate = (value * 100).rounded() / 100
+    }
+
     private func label(for speed: Float) -> String {
-        speed == Float(Int(speed)) ? "\(Int(speed))×" : String(format: "%g×", speed)
+        Self.speedText(for: speed) + "×"
+    }
+
+    /// "1", "1.1", "1.25" — no trailing zeros, no × so it can seed a text field.
+    private static func speedText(for speed: Float) -> String {
+        String(format: "%g", speed)
     }
 
     private func bufferingLabel(now: Date) -> String {

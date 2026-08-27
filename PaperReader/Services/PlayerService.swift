@@ -21,12 +21,27 @@ final class PlayerService {
     private(set) var currentSentenceIndex = 0
     private(set) var playbackError: String?
 
+    /// What the narration speed is allowed to be, whether picked from the menu
+    /// or typed in. Past 2× the voice is hard to follow, and below 0.5× the
+    /// time-pitch unit starts to smear it.
+    static let rateRange: ClosedRange<Float> = 0.5...2.0
+
+    /// Any speed in `rateRange`, not just the menu's presets. Values outside it
+    /// are clamped rather than refused, so a typed 3 lands on 2×.
     var playbackRate: Float {
         didSet {
+            let clamped = Self.clamped(playbackRate)
+            // Assigning here doesn't re-run didSet, so the lines below still see
+            // (and store) the clamped value.
+            if clamped != playbackRate { playbackRate = clamped }
             UserDefaults.standard.set(playbackRate, forKey: "playbackRate")
             applyRate()
             updateNowPlaying()
         }
+    }
+
+    static func clamped(_ rate: Float) -> Float {
+        min(max(rate, rateRange.lowerBound), rateRange.upperBound)
     }
 
     /// 0...1 across the whole paper, by sentence position.
@@ -81,7 +96,7 @@ final class PlayerService {
         self.store = store
         self.prefetcher = prefetcher
         let saved = UserDefaults.standard.float(forKey: "playbackRate")
-        self.playbackRate = saved == 0 ? 1.0 : saved
+        self.playbackRate = saved == 0 ? 1.0 : Self.clamped(saved)
 
         prefetcher.onChunkReady = { [weak self] paperID, chunkIndex in
             self?.chunkBecameReady(paperID: paperID, chunkIndex: chunkIndex)
