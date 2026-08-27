@@ -46,9 +46,14 @@ final class PlayerService {
 
     /// 0...1 across the whole paper, by sentence position.
     var progress: Double {
-        guard let paper, !paper.sentences.isEmpty else { return 0 }
+        // A single-sentence paper would divide by zero, and the NaN that comes
+        // out of it traps the moment anything converts it to an Int.
+        guard let paper, paper.sentences.count > 1 else { return 0 }
         return Double(currentSentenceIndex) / Double(paper.sentences.count - 1)
     }
+
+    /// Whole percent listened — what the players label themselves with.
+    var percentListened: Int { Int((progress * 100).rounded()) }
 
     var paper: Paper? {
         currentPaperID.flatMap { store.paper(id: $0) }

@@ -90,8 +90,10 @@ struct PaperCardView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else if paper.playback.sentenceIndex > 0, !paper.sentences.isEmpty {
-                let pct = Int(Double(paper.playback.sentenceIndex) / Double(paper.sentences.count) * 100)
-                Text("\(pct)% listened")
+                // The same fraction the bar below is drawn from, so the number
+                // and the bar can't disagree — and it tracks the live playhead
+                // while this paper is the one playing.
+                Text("\(Int((listenedFraction * 100).rounded()))% listened")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             } else {

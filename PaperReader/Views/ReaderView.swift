@@ -8,6 +8,9 @@ struct ReaderView: View {
 
     /// Turned off when the user scrolls manually; a pill offers to re-enable.
     @State private var autoScroll = true
+    /// Long titles are truncated to keep the chrome to one line; tapping the
+    /// title shows the rest.
+    @State private var isTitleExpanded = false
 
     var body: some View {
         Group {
@@ -34,14 +37,9 @@ struct ReaderView: View {
     }
 
     private var topBar: some View {
-        HStack {
-            Text(player.paper?.title ?? "")
-                .font(.headline)
-                .lineLimit(1)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .glassCard(in: Capsule())
-            Spacer()
+        HStack(alignment: .top) {
+            title
+            Spacer(minLength: 8)
             Button {
                 dismiss()
             } label: {
@@ -56,6 +54,26 @@ struct ReaderView: View {
         .padding(.horizontal)
         .padding(.vertical, 6)
         .background(alignment: .top) { statusBarScrim }
+    }
+
+    /// A title too long for one line is cut off, and the cut-off half is often
+    /// the half that says what the paper is about — so tapping shows all of it.
+    /// The rounded rectangle reads as a capsule at one line and still looks
+    /// right at three, which a capsule wouldn't.
+    private var title: some View {
+        Text(player.paper?.title ?? "")
+            .font(.headline)
+            .lineLimit(isTitleExpanded ? nil : 1)
+            .multilineTextAlignment(.leading)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .contentShape(RoundedRectangle(cornerRadius: 22))
+            .glassCard(in: RoundedRectangle(cornerRadius: 22))
+            .onTapGesture {
+                withAnimation(.snappy(duration: 0.25)) { isTitleExpanded.toggle() }
+            }
+            .accessibilityHint(isTitleExpanded ? "Collapses the title" : "Shows the full title")
     }
 
     /// Script text scrolling under the chrome used to run straight through the

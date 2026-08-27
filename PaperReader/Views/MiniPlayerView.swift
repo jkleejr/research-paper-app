@@ -69,7 +69,7 @@ struct MiniPlayerView: View {
             }
             return "Generating audio… almost done"
         }
-        return "Sentence \(player.currentSentenceIndex + 1) of \(paper.sentences.count)"
+        return "\(player.percentListened)% listened"
     }
 
     private var progressBar: some View {

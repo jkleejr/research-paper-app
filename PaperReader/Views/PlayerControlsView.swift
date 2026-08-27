@@ -92,9 +92,10 @@ struct PlayerControlsView: View {
             }
             bufferedBar
             HStack {
-                Text(sentenceLabel)
+                Text(progressLabel)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
+                    .monospacedDigit()
                 Spacer()
             }
         }
@@ -125,9 +126,9 @@ struct PlayerControlsView: View {
         return Double(lastCoveredSentence + 1) / Double(paper.sentences.count)
     }
 
-    private var sentenceLabel: String {
+    private var progressLabel: String {
         guard let paper = player.paper, !paper.sentences.isEmpty else { return "" }
-        return "Sentence \(player.currentSentenceIndex + 1) of \(paper.sentences.count)"
+        return "\(player.percentListened)% listened"
     }
 
     private var playPauseButton: some View {
