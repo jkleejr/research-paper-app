@@ -204,6 +204,8 @@ this is the What's New for 1.1.
 >
 > Also in this version
 >
+> - Fixed the narration sounding filtered after changing the speed and going back to 1x
+> - Deleting a paper while it is still processing now deletes it, and stops the work
 > - Players now show how far through you are — "50% listened" — instead of a sentence number
 > - Tap a paper's title in the reader to see the whole thing when it's too long to fit
 > - The time and battery are no longer hidden behind the paper text
@@ -224,6 +226,8 @@ A shorter version, if the headed form reads as too much for a point release:
 > - Papers start playing the moment they're marked ready — no second wait
 > - Type an exact narration speed, from 0.75× to 2×
 > - See how far through you are as a percentage, and tap a long title to read all of it
+> - Fixed the narration sounding filtered after changing speed and returning to 1x
+> - Deleting a paper mid-processing now works, and stops the work
 > - Failed papers explain why and offer a retry
 > - Fixed papers failing to process after a change on Google's side
 > - Assorted fixes: text no longer covers the clock, words split across pages are rejoined, new
