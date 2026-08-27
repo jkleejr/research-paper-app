@@ -65,6 +65,17 @@ enum AudioCache {
     }
 }
 
+extension Paper {
+    /// True when a chunk's audio is both recorded as synthesized and on disk.
+    /// Lives here rather than on the model so `Paper` stays free of the cache
+    /// (the screenshot and sample tools compile it on its own).
+    func hasAudio(forChunk index: Int) -> Bool {
+        guard chunks.indices.contains(index),
+              case .cached = chunks[index].audioStatus else { return false }
+        return AudioCache.exists(paperID: id, chunkIndex: index)
+    }
+}
+
 private extension Data {
     mutating func appendLE<T: FixedWidthInteger>(_ value: T) {
         Swift.withUnsafeBytes(of: value.littleEndian) { append(contentsOf: $0) }

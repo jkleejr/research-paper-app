@@ -18,7 +18,7 @@ struct RawTextView: View {
                     // The text is beside the point once processing failed — the
                     // reason is what the tap was for.
                     failureView(message)
-                case .ready:
+                case .ready, .preparingAudio:
                     textScroll { scriptView(paper) }
                 default:
                     textScroll { rawView(paper) }

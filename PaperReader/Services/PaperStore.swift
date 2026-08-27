@@ -11,9 +11,10 @@ final class PaperStore {
     /// Papers with a pipeline task currently running, to avoid double-starts.
     private var activePipelines: Set<UUID> = []
 
-    /// Fired when a paper's script becomes ready (and for ready papers at
-    /// launch), so its resume-position audio can be warmed up.
-    var onScriptReady: ((UUID) -> Void)?
+    /// Fired when a paper needs audio synthesized ahead of playback: its script
+    /// just finished, or it was reopened at launch. The prefetcher answers by
+    /// caching the head start (or, for a ready paper, its resume chunk).
+    var onWarmupNeeded: ((UUID) -> Void)?
 
     nonisolated private static var rootURL: URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -204,17 +205,52 @@ final class PaperStore {
             }
 
             paper.cleanedChunks = cleaned
-            paper.sentences = sentences
-            paper.chunks = ChunkPlanner.plan(for: sentences)
-            paper.playback = PlaybackState()
-            paper.status = .ready
+            if paper.sentences != sentences || paper.chunks.isEmpty {
+                // A script that came out different from last time invalidates
+                // the old chunk plan and the position saved against it. An
+                // unchanged one (the usual retry) keeps its synthesized audio
+                // rather than paying to generate it all over again.
+                paper.sentences = sentences
+                paper.chunks = ChunkPlanner.plan(for: sentences)
+                paper.playback = PlaybackState()
+            }
+            // Not ready yet: a paper is only worth calling ready once there's
+            // audio to play the instant it's tapped.
+            paper.status = .preparingAudio(
+                done: 0, total: paper.leadChunks(from: paper.resumeChunkIndex).count)
             save(paper)
-            onScriptReady?(paperID)
+            refreshAudioReadiness(for: paperID)
+            onWarmupNeeded?(paperID)
         } catch {
             paper.cleanedChunks = cleaned
             paper.status = .failed(error.localizedDescription)
             save(paper)
         }
+    }
+
+    // MARK: - Audio readiness
+
+    /// Called as each chunk of the head start lands: updates the count shown on
+    /// the card, and promotes the paper to ready once enough audio is banked
+    /// that playback can start immediately.
+    func refreshAudioReadiness(for paperID: UUID) {
+        guard var paper = paper(id: paperID), case .preparingAudio = paper.status else { return }
+        let lead = paper.leadChunks(from: paper.resumeChunkIndex)
+        let done = lead.prefix { paper.hasAudio(forChunk: $0) }.count
+        paper.status = done >= lead.count ? .ready : .preparingAudio(done: done, total: lead.count)
+        save(paper)
+    }
+
+    /// Synthesis gave up part-way through the head start. With its first chunk
+    /// in hand the paper still starts instantly, so let it through and leave the
+    /// rest to generate while it's listened to; with nothing, the error is what
+    /// the user needs to see.
+    func audioPreparationFailed(for paperID: UUID, error: Error) {
+        guard var paper = paper(id: paperID), case .preparingAudio = paper.status else { return }
+        paper.status = paper.hasAudio(forChunk: paper.resumeChunkIndex)
+            ? .ready
+            : .failed(error.localizedDescription)
+        save(paper)
     }
 
     /// Restart the pipeline for a failed/stuck paper, reusing whatever already succeeded.
@@ -239,8 +275,12 @@ final class PaperStore {
                 extractText(for: paper.id)
             case .imported, .generatingScript:
                 generateScript(for: paper.id)
+            case .preparingAudio:
+                // Whatever landed before the app quit still counts.
+                refreshAudioReadiness(for: paper.id)
+                onWarmupNeeded?(paper.id)
             case .ready:
-                onScriptReady?(paper.id)
+                onWarmupNeeded?(paper.id)
             default:
                 break
             }

@@ -80,6 +80,10 @@ struct PaperCardView: View {
             Text("Cleaning section \(done + 1) of \(total)…")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+        case .preparingAudio(let done, let total):
+            Text("Generating audio \(done + 1) of \(total)…")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         case .ready:
             if paper.playback.completed {
                 Text("Finished")
@@ -106,7 +110,7 @@ struct PaperCardView: View {
     @ViewBuilder
     private var statusAccessory: some View {
         switch paper.status {
-        case .extracting, .generatingScript:
+        case .extracting, .generatingScript, .preparingAudio:
             ProgressView()
         case .failed:
             Button {

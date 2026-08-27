@@ -44,8 +44,7 @@ final class PlayerService {
     /// the estimate is exceeded (retries); nil when not buffering.
     func bufferingRemainingSeconds(now: Date = Date()) -> Int? {
         guard isBuffering, let paper, paper.chunks.indices.contains(currentChunkIndex) else { return nil }
-        let ours = prefetcher.estimatedSeconds(
-            forChars: TTSPrefetcher.charCount(of: paper.chunks[currentChunkIndex], in: paper))
+        let ours = prefetcher.estimatedSeconds(forChars: paper.charCount(ofChunk: currentChunkIndex))
         guard let job = prefetcher.activeJob else {
             return Int(ours.rounded(.up))
         }
@@ -306,11 +305,7 @@ final class PlayerService {
     }
 
     private func chunkIsPlayable(_ index: Int, in paper: Paper) -> Bool {
-        guard paper.chunks.indices.contains(index) else { return false }
-        if case .cached = paper.chunks[index].audioStatus {
-            return AudioCache.exists(paperID: paper.id, chunkIndex: index)
-        }
-        return false
+        paper.hasAudio(forChunk: index)
     }
 
     // MARK: - Playhead ticking
