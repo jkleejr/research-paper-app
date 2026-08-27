@@ -6,8 +6,8 @@ narrates the result with Gemini text-to-speech — so you hear the paper rather 
 
 - Sentence-by-sentence highlighting, background audio, lock screen controls, variable speed
 - Papers, audio, and playback position persist on device; a killed app resumes mid-pipeline
-- A paper isn't marked ready until its first minute of narration is synthesized, so play is instant;
-  the rest is generated per chunk on demand and cached as you listen
+- A paper isn't marked ready until its opening chunk of narration is synthesized, so play is
+  instant; the rest is generated per chunk on demand and cached as you listen
 
 <img width="603" height="1311" alt="IMG_6210" src="https://github.com/user-attachments/assets/5a7de76e-00e3-4464-bd46-cb23c0029c11" />
 

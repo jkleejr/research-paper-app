@@ -4,10 +4,11 @@ import Observation
 /// Synthesizes paper audio on demand. Two demand sources feed one sequential
 /// worker (a single request in flight — friendly to rate limits): the playhead
 /// window, which keeps ~3 chunks buffered ahead of playback and always takes
-/// priority, and warmup jobs, which cache the head start of a paper whose
-/// script has just finished — a minute of audio, before the paper is offered as
-/// ready — so tapping play makes sound immediately. Nothing else is generated:
-/// past the head start, audio is paid for roughly as it's listened to.
+/// priority, and warmup jobs, which cache the chunk at a paper's resume
+/// position — for a paper whose script has just finished, that's the opening
+/// chunk, synthesized before the paper is offered as ready so tapping play
+/// makes sound immediately. Nothing else is generated in advance: past that
+/// chunk, audio is paid for roughly as it's listened to.
 @MainActor
 @Observable
 final class TTSPrefetcher {
@@ -56,21 +57,14 @@ final class TTSPrefetcher {
         self.secondsPerChar = saved > 0 ? saved : 0.03
     }
 
-    /// Cache enough audio at the paper's saved position that playback starts
-    /// instantly: the whole head start while a paper is still being prepared,
-    /// one chunk for a ready paper resuming part-way through. Chunks already
-    /// cached drain straight back out of the queue.
+    /// Cache the chunk at the paper's saved position so playback starts
+    /// instantly — the opening chunk for a paper still being prepared, the
+    /// resume chunk for a ready paper picking up part-way through. A no-op if
+    /// it's already cached.
     func warmup(paperID: UUID) {
         guard let paper = store.paper(id: paperID), !paper.chunks.isEmpty else { return }
-        let start = paper.resumeChunkIndex
-        let targets: [Int]
-        if case .preparingAudio = paper.status {
-            targets = paper.leadChunks(from: start)
-        } else {
-            targets = [start]
-        }
-        for chunkIndex in targets
-        where !warmups.contains(where: { $0.paperID == paperID && $0.chunkIndex == chunkIndex }) {
+        let chunkIndex = paper.resumeChunkIndex
+        if !warmups.contains(where: { $0.paperID == paperID && $0.chunkIndex == chunkIndex }) {
             warmups.append((paperID, chunkIndex))
         }
         kick()
@@ -160,11 +154,6 @@ final class TTSPrefetcher {
                 updated.chunks[chunkIndex].sentenceDurations = result.sentenceDurations
                 store.save(updated)
                 store.refreshAudioReadiness(for: paperID)
-                // The head start is measured in seconds of audio, so a real
-                // duration replacing an estimate can change what it still needs.
-                if case .preparingAudio = store.paper(id: paperID)?.status {
-                    warmup(paperID: paperID)
-                }
                 onChunkReady?(paperID, chunkIndex)
                 return
             } catch {

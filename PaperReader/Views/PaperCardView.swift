@@ -80,8 +80,8 @@ struct PaperCardView: View {
             Text("Cleaning section \(done + 1) of \(total)…")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-        case .preparingAudio(let done, let total):
-            Text("Generating audio \(done + 1) of \(total)…")
+        case .preparingAudio:
+            Text("Generating audio…")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         case .ready:

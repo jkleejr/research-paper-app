@@ -53,30 +53,13 @@ struct Paper: Codable, Identifiable, Equatable {
 // MARK: - Audio head start
 
 extension Paper {
-    /// How much audio is synthesized before a paper is offered as ready. Enough
-    /// that tapping play starts sound at once, and short enough that the wait to
-    /// get there is a minute's worth of narration, not the whole paper's.
-    static let leadSeconds: Double = 60
-
-    /// The chunk playback would start from right now.
+    /// The chunk playback would start from right now — and the one chunk of
+    /// audio a paper needs before it's offered as ready. It's about 45 seconds
+    /// of narration, which synthesis stays ahead of once playback begins, so
+    /// banking more only lengthens the wait before anything can be played.
     var resumeChunkIndex: Int {
         let sentence = playback.completed ? 0 : playback.sentenceIndex
         return chunks.firstIndex { $0.sentenceRange.contains(sentence) } ?? 0
-    }
-
-    /// The chunks making up that head start, always at least one. Chunks already
-    /// synthesized count their measured duration, the rest an estimate, so the
-    /// set settles on the real thing as audio lands.
-    func leadChunks(from start: Int) -> [Int] {
-        guard chunks.indices.contains(start) else { return [] }
-        var indices: [Int] = []
-        var seconds: Double = 0
-        for index in start..<chunks.count {
-            indices.append(index)
-            seconds += estimatedAudioSeconds(ofChunk: index)
-            if seconds >= Self.leadSeconds { break }
-        }
-        return indices
     }
 
     /// Characters of script in a chunk — what synthesis time scales with.
@@ -85,13 +68,6 @@ extension Paper {
         return chunks[index].sentenceRange.reduce(0) { count, i in
             sentences.indices.contains(i) ? count + sentences[i].text.count : count
         }
-    }
-
-    /// Exact once synthesized; before that, narration at roughly 150 words a
-    /// minute over ~5.7 characters a word.
-    private func estimatedAudioSeconds(ofChunk index: Int) -> Double {
-        if case .cached(let duration) = chunks[index].audioStatus { return duration }
-        return Double(charCount(ofChunk: index)) * 0.07
     }
 }
 
@@ -134,8 +110,8 @@ enum PaperStatus: Codable, Equatable {
     case imported
     case extracting
     case generatingScript(done: Int, total: Int)
-    /// Script done, synthesizing the head start of audio (see `Paper.leadSeconds`).
-    case preparingAudio(done: Int, total: Int)
+    /// Script done, synthesizing the opening chunk of audio.
+    case preparingAudio
     /// Script and head start both done — tapping play makes sound immediately.
     case ready
     case failed(String)

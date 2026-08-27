@@ -216,8 +216,7 @@ final class PaperStore {
             }
             // Not ready yet: a paper is only worth calling ready once there's
             // audio to play the instant it's tapped.
-            paper.status = .preparingAudio(
-                done: 0, total: paper.leadChunks(from: paper.resumeChunkIndex).count)
+            paper.status = .preparingAudio
             save(paper)
             refreshAudioReadiness(for: paperID)
             onWarmupNeeded?(paperID)
@@ -230,21 +229,18 @@ final class PaperStore {
 
     // MARK: - Audio readiness
 
-    /// Called as each chunk of the head start lands: updates the count shown on
-    /// the card, and promotes the paper to ready once enough audio is banked
-    /// that playback can start immediately.
+    /// Called when the opening chunk lands: promotes the paper to ready, since
+    /// there's now audio to play the moment it's tapped.
     func refreshAudioReadiness(for paperID: UUID) {
-        guard var paper = paper(id: paperID), case .preparingAudio = paper.status else { return }
-        let lead = paper.leadChunks(from: paper.resumeChunkIndex)
-        let done = lead.prefix { paper.hasAudio(forChunk: $0) }.count
-        paper.status = done >= lead.count ? .ready : .preparingAudio(done: done, total: lead.count)
+        guard var paper = paper(id: paperID), case .preparingAudio = paper.status,
+              paper.hasAudio(forChunk: paper.resumeChunkIndex) else { return }
+        paper.status = .ready
         save(paper)
     }
 
-    /// Synthesis gave up part-way through the head start. With its first chunk
-    /// in hand the paper still starts instantly, so let it through and leave the
-    /// rest to generate while it's listened to; with nothing, the error is what
-    /// the user needs to see.
+    /// Synthesis gave up on the opening chunk. If it's somehow already cached
+    /// the paper still starts instantly, so let it through; otherwise the error
+    /// is what the user needs to see.
     func audioPreparationFailed(for paperID: UUID, error: Error) {
         guard var paper = paper(id: paperID), case .preparingAudio = paper.status else { return }
         paper.status = paper.hasAudio(forChunk: paper.resumeChunkIndex)
