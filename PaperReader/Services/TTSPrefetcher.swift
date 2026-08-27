@@ -82,6 +82,13 @@ final class TTSPrefetcher {
         playhead = nil
     }
 
+    /// The paper is gone: drop everything queued for it. A request already in
+    /// flight finishes, then finds no paper to save against and is discarded.
+    func forget(paperID: UUID) {
+        warmups.removeAll { $0.paperID == paperID }
+        if playhead?.paperID == paperID { playhead = nil }
+    }
+
     private func kick() {
         guard task == nil else { return }
         task = Task { await run() }

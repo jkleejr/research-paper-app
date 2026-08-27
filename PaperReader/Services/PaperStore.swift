@@ -8,13 +8,23 @@ final class PaperStore {
     private(set) var papers: [Paper] = []
 
     private let gemini: GeminiClient
-    /// Papers with a pipeline task currently running, to avoid double-starts.
-    private var activePipelines: Set<UUID> = []
+    /// Running pipeline tasks, keyed by paper: guards against double-starts,
+    /// and gives deletion something to cancel.
+    private var pipelines: [UUID: Task<Void, Never>] = [:]
+    /// Papers deleted this launch. A pipeline in flight holds its own copy of
+    /// the paper and saves it after every chunk, which would write a deleted
+    /// paper back to disk and into the library — so saves for these are
+    /// dropped, whatever still has a reference.
+    private var deletedIDs: Set<UUID> = []
 
     /// Fired when a paper needs audio synthesized ahead of playback: its script
     /// just finished, or it was reopened at launch. The prefetcher answers by
-    /// caching the head start (or, for a ready paper, its resume chunk).
+    /// caching the opening chunk (or, for a ready paper, its resume chunk).
     var onWarmupNeeded: ((UUID) -> Void)?
+
+    /// Fired when a paper is deleted, so the player can unload it if it was
+    /// playing and the prefetcher can drop any synthesis queued for it.
+    var onPaperDeleted: ((UUID) -> Void)?
 
     nonisolated private static var rootURL: URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -62,6 +72,7 @@ final class PaperStore {
     }
 
     func save(_ paper: Paper) {
+        guard !deletedIDs.contains(paper.id) else { return }
         if let i = papers.firstIndex(where: { $0.id == paper.id }) {
             papers[i] = paper
         } else {
@@ -83,9 +94,15 @@ final class PaperStore {
         }
     }
 
+    /// Deletes a paper whatever stage it's at: a pipeline still cleaning or
+    /// synthesizing is cancelled, its later saves are ignored, and the player
+    /// and prefetcher are told to let go of it.
     func delete(_ paper: Paper) {
+        deletedIDs.insert(paper.id)
+        pipelines.removeValue(forKey: paper.id)?.cancel()
         papers.removeAll { $0.id == paper.id }
         try? FileManager.default.removeItem(at: Self.folderURL(for: paper.id))
+        onPaperDeleted?(paper.id)
     }
 
     func paper(id: UUID) -> Paper? {
@@ -150,12 +167,11 @@ final class PaperStore {
     func generateScript(for paperID: UUID) {
         guard let paper = paper(id: paperID),
               paper.extractedPages != nil,
-              !activePipelines.contains(paperID) else { return }
-        activePipelines.insert(paperID)
+              pipelines[paperID] == nil else { return }
 
-        Task {
-            defer { activePipelines.remove(paperID) }
+        pipelines[paperID] = Task {
             await runScriptPipeline(paperID: paperID)
+            pipelines[paperID] = nil
         }
     }
 
@@ -190,6 +206,8 @@ final class PaperStore {
             let kind = paper.kind ?? .prose
 
             for (i, chunk) in inputChunks.enumerated() where cleaned[i] == nil {
+                // Deleted mid-run: stop spending on a paper nobody is waiting for.
+                try Task.checkCancellation()
                 paper.status = .generatingScript(done: i, total: inputChunks.count)
                 paper.cleanedChunks = cleaned
                 save(paper)
@@ -197,6 +215,7 @@ final class PaperStore {
                 cleaned[i] = try await generator.cleanChunk(chunk, index: i,
                                                             total: inputChunks.count, kind: kind)
             }
+            try Task.checkCancellation()
 
             let script = cleaned.compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: "\n\n")
             let sentences = SentenceSegmenter.sentences(from: script)
@@ -220,6 +239,9 @@ final class PaperStore {
             save(paper)
             refreshAudioReadiness(for: paperID)
             onWarmupNeeded?(paperID)
+        } catch is CancellationError {
+            // Deleted, or the app is tearing down: leave no trace either way.
+            return
         } catch {
             paper.cleanedChunks = cleaned
             paper.status = .failed(error.localizedDescription)
