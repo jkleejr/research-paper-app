@@ -54,7 +54,7 @@ final class ScreenshotTests: XCTestCase {
         snap("02-reader")
 
         // Playing: highlight advances and the control flips to pause.
-        let started = sentenceIndex()
+        let started = percentListened()
         play.tap()
         XCTAssertNotNil(waitForHittable("pause.circle.fill", timeout: 5),
                         "playback never started — bundled audio may be unreadable")
@@ -63,10 +63,10 @@ final class ScreenshotTests: XCTestCase {
 
         // Proves the audio really is playing out of the app bundle: the playhead
         // has to have advanced on its own, with no API call possible.
-        let reached = sentenceIndex()
+        let reached = percentListened()
         XCTAssertGreaterThan(reached, started,
-                             "playhead stuck at sentence \(started) — bundled audio not playing")
-        print("SAMPLE PLAYBACK OK — advanced \(started) -> \(reached) of 44")
+                             "playhead stuck at \(started)% — bundled audio not playing")
+        print("SAMPLE PLAYBACK OK — advanced \(started)% -> \(reached)%")
 
         // Back to the library; the mini player now shows what's playing.
         XCTAssertTrue(returnToLibrary(), "reader wouldn't close\n\(app.debugDescription)")
@@ -134,7 +134,7 @@ final class ScreenshotTests: XCTestCase {
     /// The reader's close button can report itself hittable before the cover
     /// has settled, so a single tap sometimes lands on nothing. The library's
     /// gear button being hittable is the only reliable signal that we're back —
-    /// the mini player shows a "Sentence N of M" label too, so that isn't one.
+    /// the mini player shows an "N% listened" label too, so that isn't one.
     private func returnToLibrary() -> Bool {
         for _ in 0..<6 {
             if waitForHittable("gearshape", timeout: 2) != nil { return true }
@@ -145,12 +145,12 @@ final class ScreenshotTests: XCTestCase {
         return false
     }
 
-    /// Current position from the reader's "Sentence N of M" counter.
-    private func sentenceIndex() -> Int {
+    /// Current position from the player's "N% listened" label.
+    private func percentListened() -> Int {
         let label = app.staticTexts.matching(
-            NSPredicate(format: "label BEGINSWITH 'Sentence '")).firstMatch
-        guard label.exists, let n = label.label.split(separator: " ").dropFirst().first else { return 0 }
-        return Int(n) ?? 0
+            NSPredicate(format: "label ENDSWITH '% listened'")).firstMatch
+        guard label.exists, let n = label.label.split(separator: "%").first else { return -1 }
+        return Int(n) ?? -1
     }
 
     private func snap(_ name: String) {

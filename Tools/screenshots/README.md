@@ -16,7 +16,7 @@ box is rejected with "the dimensions of one or more screenshots are wrong". Fill
 
 ## 1. Stage a sample library
 
-`SeedLibrary.swift` writes `paper.json` files plus silent WAV audio of the correct
+`main.swift` writes `paper.json` files plus silent WAV audio of the correct
 duration into a folder, reusing the app's own `Paper`/`ChunkPlanner` types so the
 JSON is exactly what the real pipeline produces. Silent audio means playback,
 highlighting, and progress all behave for real without spending any API credits.
@@ -25,7 +25,7 @@ highlighting, and progress all behave for real without spending any API credits.
 SIM=$(xcrun simctl list devices available | grep "iPhone 17 Pro Max" | head -1 | sed -E 's/.*\(([-0-9A-F]+)\).*/\1/')
 xcrun simctl boot "$SIM"
 
-swiftc -O Tools/screenshots/SeedLibrary.swift \
+swiftc -O Tools/screenshots/main.swift \
   PaperReader/Models/Paper.swift PaperReader/Services/SentenceSegmenter.swift \
   -o /tmp/seedtool
 /tmp/seedtool /tmp/seed

@@ -136,12 +136,16 @@ lines below are wrapped for reading and would paste as hard breaks mid-sentence)
 > inline citations, figure captions, and table fragments all get read aloud as noise.
 > Paper Reader uses Google's Gemini models to clean the extracted text into a coherent
 > script first, then narrates it so you hear the paper, not the layout.
+> It reads more than papers. Paper Reader works out what you have imported and cleans it
+> to suit — a slide deck's fragments become full spoken sentences rather than scattered
+> labels read aloud, and an article or report keeps its wording intact.
 > - Try it straight away — a sample paper comes ready to play, no setup, no key
 >
 > Import any text-based PDF from Files or iCloud Drive:
 >
+> - Papers start playing the moment they are ready, with no second wait for audio
 > - Follow along with sentence-by-sentence highlighting, or listen with the screen off
-> - Background audio, lock screen controls, adjustable playback speed
+> - Background audio, lock screen controls, and any narration speed from 0.75x to 2x
 > - 8 narration voices to choose from
 > - Papers, audio, and progress are saved on device, so you can pick up where you left off
 > - Processing resumes where it stopped if you close the app mid-paper
