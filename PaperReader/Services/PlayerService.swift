@@ -192,6 +192,13 @@ final class PlayerService {
         seek(toSentence: currentSentenceIndex + delta)
     }
 
+    /// The loaded paper was deleted out from under us — stop, or the audio
+    /// keeps playing for a paper that no longer exists.
+    func unload(paperID: UUID) {
+        guard currentPaperID == paperID else { return }
+        dismiss()
+    }
+
     /// X button on the mini-player: stop and unload.
     func dismiss() {
         stopPlayback(persist: true)
@@ -490,6 +497,14 @@ final class PlayerService {
 
     private func applyRate() {
         timePitch.rate = playbackRate
+        // At 1x there is nothing to stretch, but the unit keeps running its
+        // phase vocoder once a rate change has engaged it, and what comes out
+        // is no longer what went in. Measured offline against the bundled
+        // sample: after 1.25x and back to 1x, the output stops matching the
+        // source at any alignment (error as large as the signal itself), which
+        // is the filtered, not-quite-the-same-voice sound. Bypassing the unit
+        // when it has no work to do makes 1x bit-exact again.
+        timePitch.bypass = abs(playbackRate - 1) < 0.001
     }
 
     private func configureAudioSession() {
