@@ -55,6 +55,24 @@ struct ReaderView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 6)
+        .background(alignment: .top) { statusBarScrim }
+    }
+
+    /// Script text scrolling under the chrome used to run straight through the
+    /// clock and battery. This covers the status bar solidly and fades out level
+    /// with the title, so the chrome still floats over the script below it.
+    private var statusBarScrim: some View {
+        LinearGradient(
+            stops: [
+                .init(color: Color(.systemBackground), location: 0),
+                .init(color: Color(.systemBackground), location: 0.7),
+                .init(color: Color(.systemBackground).opacity(0), location: 1),
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .ignoresSafeArea(edges: .top)
+        .allowsHitTesting(false)
     }
 
     private func sentenceScroll(_ paper: Paper) -> some View {
