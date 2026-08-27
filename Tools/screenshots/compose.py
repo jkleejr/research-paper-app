@@ -36,7 +36,7 @@ FRAMES = [
     ("03-reader-playing", "Follow along,\nsentence by sentence",
      "Headers, page numbers and citation clutter\nare cleaned out first."),
     ("08-voices", "Eight narration voices",
-     "Pick a voice, and listen at 0.75× to 2×."),
+     "Pick a voice, and listen at any speed\nfrom 0.5× to 2×."),
     ("07-api-key", "Bring your own\nAPI key",
      "No subscription. Usage is billed to your\nown Google account."),
 ]
