@@ -177,6 +177,63 @@ free tier" and "roughly $1 per paper, or ~$1.75 per 50k characters". Both were c
   common case, and a bill that lands above the promise is what one-star reviews are made of.
   "50k characters" was dropped as well — nobody knows their paper's character count.
 
+### What's New — the release after 1.0
+
+Everything below landed after 1.0 (4) was submitted on 2026-08-17, so it describes whatever
+ships next. **Which field it goes in depends on 1.0's fate:** if 1.0 (4) is pulled with *Remove
+from Review* and this work goes out as build 5, there is no What's New field — a first release
+has no release notes, and the description is what needs editing instead, since it still says
+"research paper PDFs" and the app now reads decks and articles too. If 1.0 is approved and live,
+this is the What's New for 1.1.
+
+> Now reads more than research papers
+>
+> Slide decks and articles work too. Paper Reader recognises what kind of document you've
+> imported and cleans it accordingly — a deck's bullet fragments become full spoken sentences
+> instead of disconnected scraps, and an article keeps its wording intact.
+>
+> Starts playing right away
+>
+> Papers no longer say they're ready before the audio is. The opening narration is generated
+> first, so pressing play makes sound immediately instead of leaving you waiting.
+>
+> Set an exact narration speed
+>
+> Tap the speed button and choose Custom Speed to type any value from 0.75× to 2×, not just the
+> presets.
+>
+> Also in this version
+>
+> - Players now show how far through you are — "50% listened" — instead of a sentence number
+> - Tap a paper's title in the reader to see the whole thing when it's too long to fit
+> - The time and battery are no longer hidden behind the paper text
+> - Papers that fail now tell you why, with a suggested fix and a Try Again button
+> - Words and sentences split across a page break are rejoined instead of read as two pieces
+> - Fixed papers failing to process after a change on Google's side
+> - Clearer cost estimate on the setup screen — cleanup is billed too, a few cents on top of
+>   narration
+> - New app icon
+
+Deliberately left out: the card and mini player briefly disagreeing about how far in you were,
+and a divide-by-zero on a single-sentence paper. Neither existed in a shipped build — the first
+lasted one commit, the second was introduced and closed in the same one.
+
+A shorter version, if the headed form reads as too much for a point release:
+
+> - Slide decks and articles now work, not just research papers
+> - Papers start playing the moment they're marked ready — no second wait
+> - Type an exact narration speed, from 0.75× to 2×
+> - See how far through you are as a percentage, and tap a long title to read all of it
+> - Failed papers explain why and offer a retry
+> - Fixed papers failing to process after a change on Google's side
+> - Assorted fixes: text no longer covers the clock, words split across pages are rejoined, new
+>   icon
+
+**Screenshots need regenerating for this release** — two are stale: the voices caption promised
+"0.75× to 2×" before speeds became typeable, and the API-key capture still shows the old
+free-tier line. `Tools/screenshots/README.md` has the pipeline; 1.0 was uploaded at 6.5", so
+use `screenshots/appstore-6.5/`.
+
 ### App Privacy ("nutrition label")
 Answer **Data Not Collected**. The app has no backend, no analytics, and no SDKs; text sent to
 Google is processed under the user's own API key and account, on their behalf, not collected by
