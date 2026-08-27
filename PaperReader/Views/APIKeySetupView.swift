@@ -22,7 +22,7 @@ struct APIKeySetupView: View {
                         Label("Get a key at aistudio.google.com", systemImage: "key.fill")
                     }
                 } footer: {
-                    Text("Reading text works on the free tier. Generating audio uses Gemini's text-to-speech model, which requires billing enabled on your Google account.")
+                    Text("Generating audio uses Gemini's text-to-speech model, which requires billing enabled on your Google account. A typical paper costs $1–2 of Google usage; a long one can reach $3. Text cleanup adds a few cents.")
                 }
 
                 Section {

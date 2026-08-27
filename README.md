@@ -19,8 +19,9 @@ narrates the result with Gemini text-to-speech — so you hear the paper rather 
 
 There is no backend and no subscription. Each user supplies their own Gemini API key, stored in
 the iOS Keychain, and requests go straight from the device to Google billed to that user's own
-account. Get one at [aistudio.google.com/apikey](https://aistudio.google.com/apikey). Text
-cleanup runs on the free tier; text-to-speech requires billing enabled.
+account. Get one at [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
+Text-to-speech requires billing enabled, and enabling it moves the project off the free tier, so
+cleanup is billed too — a few cents a paper, against $1–3 of narration.
 
 **Never commit an API key or embed one in a build.**
 
