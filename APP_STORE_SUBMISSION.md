@@ -1,20 +1,38 @@
 # App Store submission — Paper Reader
 
-Working notes for the first public App Store release. Version **1.0 (4)**, bundle ID
+Working notes for the first public App Store release. Version **1.0 (5)**, bundle ID
 `com.jklwjr.PaperReader`, team `42WF5JQ74Y`, iPhone only.
 
-> **Submitted for review 2026-08-17** — 1.0 (4), awaiting Apple. What went in, where it
-> differs from the plan below: App Store name kept as **"Paper Reader App"**; category
-> **Productivity** primary, **Education** secondary (the reverse of the recommendation);
-> screenshots uploaded at **6.5" (1242×2688)**, the only iPhone size this record offers;
-> DSA trader status declared **non-trader**; Content Rights answered yes-with-rights, on the
-> strength of the CC BY 4.0 sample; privacy label **Data Not Collected**, published; age
-> rating 4+; review notes pasted **without** a demo key.
+> **Submitted for review 2026-08-27** — 1.0 (5), replacing build 4.
 >
-> Still outstanding: run 1.0 (4) on a real iPhone —
-> it is on TestFlight now, so installing from there tests the exact submitted binary. If that
-> turns up a problem, the version can be pulled with **Remove from Review**, fixed, and
-> resubmitted as build 5.
+> Build 4 went in on 2026-08-17 and sat at **Waiting for Review** for ten days without ever
+> being picked up. It was pulled with **Remove from Review** rather than waited out, because
+> testing it on an iPhone turned up two bugs — the narration sounding filtered after a speed
+> change back to 1x, and papers refusing to delete while still processing — and because the
+> app had gained slide-deck and article support in the meantime.
+>
+> **The thing most likely to have sunk build 4 had review started:** the Privacy Policy and
+> Support URLs both returned 404 the entire time. GitHub Pages had never been enabled for the
+> repo, though these notes claimed the pages were done. Both are live now, and both were
+> confirmed 200 rather than assumed.
+>
+> What changed for build 5: the two bug fixes above; instant playback once a paper is ready;
+> typed narration speeds; percentage-listened labels in place of a sentence counter; a
+> tappable full title in the reader; the corrected in-app cost copy; and the new blue icon.
+> Metadata: description broadened to say the app reads decks and articles, screenshots
+> regenerated (the voices caption and the API-key capture had both gone stale), both hosted
+> pages updated and published.
+>
+> Unchanged from build 4's record: App Store name **"Paper Reader App"**; category
+> **Productivity** primary, **Education** secondary; screenshots at **6.5" (1242×2688)**, the
+> only iPhone size this record offers; DSA trader status **non-trader**; Content Rights
+> yes-with-rights, on the strength of the CC BY 4.0 sample; privacy label **Data Not
+> Collected**, published; age rating 4+; review notes pasted **without** a demo key.
+>
+> Still outstanding: run 1.0 (5) from TestFlight on a real iPhone. The audio fix was verified
+> by measuring the waveform offline, not by listening on hardware, and hardware is where the
+> bug was found. If **Waiting for Review** stalls again, the cause is more likely account-level
+> than queue-level — check Agreements, Tax, and Banking, and App Review messages.
 
 ---
 
