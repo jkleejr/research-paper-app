@@ -1,0 +1,35 @@
+# Both of these URLs are compiled into the shipped app and listed in App Store
+# Connect, and a privacy policy URL is one App Review opens. They returned 404
+# for the ten days build 4 sat in the review queue, because GitHub Pages had
+# never been switched on and nothing was checking. This checks.
+#
+# A failed run emails the repository owner. Note that GitHub disables scheduled
+# workflows after 60 days without repository activity, so this stops watching if
+# the project goes quiet — an external uptime monitor is the answer if that
+# matters.
+name: Pages check
+
+on:
+  schedule:
+    - cron: "0 13 * * *"   # daily, 13:00 UTC
+  workflow_dispatch:        # and a button to run it on demand
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Both hosted pages must answer 200
+        run: |
+          failed=0
+          for url in \
+            https://jkleejr.github.io/research-paper-app/ \
+            https://jkleejr.github.io/research-paper-app/privacy.html
+          do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 30 --retry 2 "$url" || echo "000")
+            echo "$code  $url"
+            [ "$code" = "200" ] || failed=1
+          done
+          if [ "$failed" = "1" ]; then
+            echo "::error::A hosted page is not answering 200. The app and the App Store listing both link to these."
+            exit 1
+          fi
