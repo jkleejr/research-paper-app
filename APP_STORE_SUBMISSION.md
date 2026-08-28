@@ -58,11 +58,19 @@ Working notes for the first public App Store release. Version **1.0 (4)**, bundl
 
 ## 2. Still to do — outside the code
 
-### Hosted pages — done
-GitHub Pages serves `docs/` from the `main` branch at the URLs compiled into the app:
+### Hosted pages — NOT LIVE, blocking
+Both URLs are compiled into the app, listed in App Store Connect, and currently return
+**404**. GitHub Pages has never been enabled for the repo — `GET /repos/jkleejr/research-paper-app/pages`
+answers `Not Found`, so it isn't a misconfigured source, it was simply never switched on.
+The files themselves are in `docs/` on `main` and are correct; nothing is published to serve them.
 
-- Privacy Policy — `https://jkleejr.github.io/research-paper-app/privacy.html`
-- Support — `https://jkleejr.github.io/research-paper-app/`
+- Privacy Policy — `https://jkleejr.github.io/research-paper-app/privacy.html` → 404
+- Support — `https://jkleejr.github.io/research-paper-app/` → 404
+
+This is a rejection waiting to happen: a Privacy Policy URL is mandatory for every app and
+App Review does open it, and the same two links sit in the app's own Settings screen. Fix
+before resubmitting — repo **Settings → Pages**, source **Deploy from a branch**, branch
+`main`, folder `/docs`. Then confirm both URLs return 200 rather than assuming they do.
 
 If you ever move them, update `AppConfig.privacyPolicyURL` / `supportURL` and rebuild.
 
