@@ -129,44 +129,45 @@ pipeline is repeatable — see `Tools/screenshots/README.md`. Raw unframed captu
 > Turn any research paper into clean, listenable audio. Import a PDF, and Paper Reader
 > filters out the headers, page numbers, and citation clutter, then narrates the text.
 
-**Description** (1,680 / 4,000 characters — paste from `description.txt`, not from here; the
+**Description** (1,965 / 4,000 characters — paste from `description.txt`, not from here; the
 lines below are wrapped for reading and would paste as hard breaks mid-sentence):
 > Paper Reader turns research paper PDFs into audio you can actually listen to.
+>
 > PDFs of academic papers are hostile to text-to-speech: headers, footers, page numbers,
 > inline citations, figure captions, and table fragments all get read aloud as noise.
 > Paper Reader uses Google's Gemini models to clean the extracted text into a coherent
 > script first, then narrates it so you hear the paper, not the layout.
+>
 > It reads more than papers. Paper Reader works out what you have imported and cleans it
 > to suit — a slide deck's fragments become full spoken sentences rather than scattered
 > labels read aloud, and an article or report keeps its wording intact.
-> - Try it straight away — a sample paper comes ready to play, no setup, no key
+>
+> • Try it straight away — a sample paper comes ready to play, no setup, no key
 >
 > Import any text-based PDF from Files or iCloud Drive:
 >
-> - Papers start playing the moment they are ready, with no second wait for audio
-> - Follow along with sentence-by-sentence highlighting, or listen with the screen off
-> - Background audio, lock screen controls, and any narration speed from 0.75x to 2x
-> - 8 narration voices to choose from
-> - Papers, audio, and progress are saved on device, so you can pick up where you left off
-> - Processing resumes where it stopped if you close the app mid-paper
+> • Papers start playing the moment they are ready, with no second wait for audio
+> • Follow along with sentence-by-sentence highlighting, or listen with the screen off
+> • Background audio, lock screen controls, and any narration speed from 0.75x to 2x
+> • 8 narration voices to choose from
+> • Papers, audio, and progress are saved on device, so you can pick up where you left off
+> • Processing resumes where it stopped if you close the app mid-paper
 >
 > BRING YOUR OWN API KEY:
 >
-> - Paper Reader has no subscription and no servers. The included sample paper plays
->   immediately, and to narrate your own papers you supply your own Google Gemini API key —
->   requests go straight from your phone to Google, billed to your own Google account.
-> - Narration uses Gemini's text-to-speech model, which requires billing enabled on your
+> • Paper Reader has no subscription and no servers. The included sample paper plays
+>   immediately, and to narrate your own papers you supply your own Google Gemini API key
+>   — requests go straight from your phone to Google, billed to your own Google account.
+> • Narration uses Gemini's text-to-speech model, which requires billing enabled on your
 >   Google account. A typical paper costs $1–2 of Google usage; a long one can reach $3.
 >   Text cleanup adds a few cents.
-> - Get a key at aistudio.google.com/apikey.
+> • Get a key at aistudio.google.com/apikey.
 >
 > NOTE:
 >
-> - Your key is stored in the iOS Keychain.
-> - Papers and audio never leave your device except as text sent to Google to be processed.
-> - Nothing is collected by the developer.
-> - Paper Reader reads embedded PDF text and does not perform OCR, so image-only scans won't
->   work.
+> Your key is stored in the iOS Keychain. Papers and audio never leave your device except
+> as text sent to Google to be processed. Nothing is collected by the developer. Paper
+> Reader reads embedded PDF text.
 
 The three bullets that split one sentence in the draft are joined back into a single bullet —
 the App Store renders the description as plain text, so a sentence broken across bullets reads
