@@ -23,4 +23,7 @@ BRING YOUR OWN API KEY:
 
 NOTE:
 
-Your key is stored in the iOS Keychain. Papers and audio never leave your device except as text sent to Google to be processed. Nothing is collected by the developer. Paper Reader reads embedded PDF text and does not perform OCR, so image-only scans won't work.
+- Your key is stored in the iOS Keychain.
+- Papers and audio never leave your device except as text sent to Google to be processed.
+- Nothing is collected by the developer.
+- Paper Reader reads embedded PDF text and does not perform OCR, so image-only scans won't work.

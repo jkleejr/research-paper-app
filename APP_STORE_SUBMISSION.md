@@ -161,9 +161,12 @@ lines below are wrapped for reading and would paste as hard breaks mid-sentence)
 > - Get a key at aistudio.google.com/apikey.
 >
 > NOTE:
-> Your key is stored in the iOS Keychain. Papers and audio never leave your device except as
-> text sent to Google to be processed. Nothing is collected by the developer.
-> Paper Reader reads embedded PDF text and does not perform OCR, so image-only scans won't work.
+>
+> - Your key is stored in the iOS Keychain.
+> - Papers and audio never leave your device except as text sent to Google to be processed.
+> - Nothing is collected by the developer.
+> - Paper Reader reads embedded PDF text and does not perform OCR, so image-only scans won't
+>   work.
 
 The three bullets that split one sentence in the draft are joined back into a single bullet —
 the App Store renders the description as plain text, so a sentence broken across bullets reads
